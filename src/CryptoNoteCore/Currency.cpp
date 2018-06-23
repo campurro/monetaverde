@@ -40,11 +40,20 @@ namespace CryptoNote {
 
 /* MONETAVERDE COMPATIBILITY */
 #if defined(_MSC_VER)
+    /*    #define NOMINMAX 1
     #include <windows.h>
     #include <winnt.h>
 
     static inline void mul(uint64_t a, uint64_t b, uint64_t &low, uint64_t &high) {
         low = mul128(a, b, &high);
+    }
+    */
+    #include <intrin.h>
+
+    #pragma intrinsic(_umul128)
+
+    static inline void mul(uint64_t a, uint64_t b, uint64_t &low, uint64_t &high) {
+        low = _umul128(a, b, &high);
     }
 
 #else
