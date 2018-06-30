@@ -102,7 +102,7 @@ public:
   virtual size_t getPoolTransactionCount() const override;
   virtual size_t getBlockchainTransactionCount() const override;
   virtual size_t getAlternativeBlockCount() const override;
-  virtual uint64_t getTotalGeneratedAmount() const override;
+  virtual boost::multiprecision::uint128_t getTotalGeneratedAmount() const override;
   virtual std::vector<BlockTemplate> getAlternativeBlocks() const override;
   virtual std::vector<Transaction> getPoolTransactions() const override;
   boost::optional<std::pair<MultisignatureOutput, uint64_t>>
@@ -119,7 +119,7 @@ public:
   virtual std::vector<Crypto::Hash> getBlockHashesByTimestamps(uint64_t timestampBegin, size_t secondsCount) const override;
   virtual std::vector<Crypto::Hash> getTransactionHashesByPaymentId(const Crypto::Hash& paymentId) const override;
   RawBlock getRawBlockForRPC(const Crypto::Hash& blockHash) const;
-    
+
 private:
   const Currency& currency;
   System::Dispatcher& dispatcher;
@@ -149,7 +149,7 @@ private:
   bool f_getMixin(const Transaction& transaction, uint64_t& mixin);
   std::error_code validateMixin(const Transaction& transaction, uint8_t majorBlockVersion);
   std::error_code validateTransaction(const CachedTransaction& transaction, TransactionValidatorState& state, IBlockchainCache* cache, uint64_t& fee, uint32_t blockIndex);
-  
+
   uint32_t findBlockchainSupplement(const std::vector<Crypto::Hash>& remoteBlockIds) const;
   std::vector<Crypto::Hash> getBlockHashes(uint32_t startBlockIndex, uint32_t maxCount) const;
 
@@ -190,7 +190,7 @@ private:
   void notifyOnSuccess(error::AddBlockErrorCode opResult, uint32_t previousBlockIndex, const CachedBlock& cachedBlock,
                        const IBlockchainCache& cache);
   void copyTransactionsToPool(IBlockchainCache* alt);
-  
+
   void actualizePoolTransactions();
   void actualizePoolTransactionsLite(const TransactionValidatorState& validatorState); //Checks pool txs only for double spend.
 

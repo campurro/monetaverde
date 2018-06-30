@@ -62,7 +62,7 @@ struct CachedBlockInfo {
   Crypto::Hash blockHash;
   uint64_t timestamp;
   Difficulty cumulativeDifficulty;
-  uint64_t alreadyGeneratedCoins;
+  boost::multiprecision::uint128_t alreadyGeneratedCoins;
   uint64_t alreadyGeneratedTransactions;
   uint32_t blockSize;
 
@@ -116,7 +116,7 @@ public:
     const std::vector<CachedTransaction>& cachedTransactions,
     const TransactionValidatorState& validatorState,
     size_t blockSize,
-    uint64_t generatedCoins,
+    boost::multiprecision::uint128_t generatedCoins,
     Difficulty blockDifficulty,
     RawBlock&& rawBlock) override;
 
@@ -126,7 +126,7 @@ public:
 
   bool checkIfSpentMultisignature(uint64_t amount, uint32_t globalIndex) const override;
   bool checkIfSpentMultisignature(uint64_t amount, uint32_t globalIndex, uint32_t blockIndex) const override;
-  
+
   bool isTransactionSpendTimeUnlocked(uint64_t unlockTime) const override;
   bool isTransactionSpendTimeUnlocked(uint64_t unlockTime, uint32_t blockIndex) const override;
 
@@ -135,7 +135,7 @@ public:
 
   ExtractOutputKeysResult extractKeyOtputIndexes(uint64_t amount, Common::ArrayView<uint32_t> globalIndexes, std::vector<PackedOutIndex>& outIndexes) const override;
   ExtractOutputKeysResult extractKeyOtputReferences(uint64_t amount, Common::ArrayView<uint32_t> globalIndexes, std::vector<std::pair<Crypto::Hash, size_t>>& outputReferences) const override;
-  
+
   bool getMultisignatureOutputIfExists(uint64_t amount, uint32_t globalIndex, MultisignatureOutput& output, uint64_t& unlockTime) const override;
   bool getMultisignatureOutputIfExists(uint64_t amount, uint32_t globalIndex, uint32_t blockIndex, MultisignatureOutput& output, uint64_t& unlockTime) const override;
   std::pair<Crypto::Hash, size_t> getMultisignatureOutputReference(uint64_t amount, uint32_t globalIndex) const override;
@@ -163,13 +163,13 @@ public:
   virtual Difficulty getCurrentCumulativeDifficulty() const override;
   virtual Difficulty getCurrentCumulativeDifficulty(uint32_t blockIndex) const override;
 
-  uint64_t getAlreadyGeneratedCoins() const override;
-  uint64_t getAlreadyGeneratedCoins(uint32_t blockIndex) const override;
+  boost::multiprecision::uint128_t getAlreadyGeneratedCoins() const override;
+  boost::multiprecision::uint128_t getAlreadyGeneratedCoins(uint32_t blockIndex) const override;
   uint64_t getAlreadyGeneratedTransactions(uint32_t blockIndex) const override;
   std::vector<uint64_t> getLastUnits(size_t count, uint32_t blockIndex, UseGenesis use,
                                    std::function<uint64_t(const CachedBlockInfo&)> pred) const override;
 
-  Crypto::Hash getBlockHash(uint32_t blockIndex) const override;  
+  Crypto::Hash getBlockHash(uint32_t blockIndex) const override;
   virtual std::vector<Crypto::Hash> getBlockHashes(uint32_t startIndex, size_t maxCount) const override;
 
   virtual IBlockchainCache* getParent() const override;
@@ -312,7 +312,7 @@ private:
   std::unique_ptr<BlockchainStorage> storage;
 
   std::vector<IBlockchainCache*> children;
- 
+
   void serialize(ISerializer& s);
 
   void addSpentKeyImage(const Crypto::KeyImage& keyImage, uint32_t blockIndex);
@@ -343,7 +343,7 @@ private:
     const std::vector<CachedTransaction>& cachedTransactions,
     const TransactionValidatorState& validatorState,
     size_t blockSize,
-    uint64_t generatedCoins,
+    boost::multiprecision::uint128_t generatedCoins,
     Difficulty blockDifficulty,
     RawBlock&& rawBlock);
 };

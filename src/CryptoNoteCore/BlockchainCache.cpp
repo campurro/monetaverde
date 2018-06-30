@@ -92,7 +92,12 @@ void CachedBlockInfo::serialize(ISerializer& s) {
   s(timestamp, "timestamp");
   s(blockSize, "block_size");
   s(cumulativeDifficulty, "cumulative_difficulty");
-  s(alreadyGeneratedCoins, "already_generated_coins");
+
+  std::ostringstream oss;
+  oss << alreadyGeneratedCoins;
+  std::string str = oss.str();
+  s(str, "already_generated_coins");
+  //s(alreadyGeneratedCoins, "already_generated_coins");
   s(alreadyGeneratedTransactions, "already_generated_transaction_count");
 }
 
@@ -150,7 +155,7 @@ BlockchainCache::BlockchainCache(const std::string& filename, const Currency& cu
 void BlockchainCache::pushBlock(const CachedBlock& cachedBlock,
                                 const std::vector<CachedTransaction>& cachedTransactions,
                                 const TransactionValidatorState& validatorState, size_t blockSize,
-                                uint64_t generatedCoins, Difficulty blockDifficulty, RawBlock&& rawBlock) {
+                                boost::multiprecision::uint128_t generatedCoins, Difficulty blockDifficulty, RawBlock&& rawBlock) {
   //we have to call this function from constructor so it has to be non-virtual
   doPushBlock(cachedBlock, cachedTransactions, validatorState, blockSize, generatedCoins, blockDifficulty, std::move(rawBlock));
 }
@@ -158,14 +163,15 @@ void BlockchainCache::pushBlock(const CachedBlock& cachedBlock,
 void BlockchainCache::doPushBlock(const CachedBlock& cachedBlock,
                                 const std::vector<CachedTransaction>& cachedTransactions,
                                 const TransactionValidatorState& validatorState, size_t blockSize,
-                                uint64_t generatedCoins, Difficulty blockDifficulty, RawBlock&& rawBlock) {
+                                boost::multiprecision::uint128_t generatedCoins, Difficulty blockDifficulty, RawBlock&& rawBlock) {
   logger(Logging::DEBUGGING) << "Pushing block " << cachedBlock.getBlockHash() << " at index " << cachedBlock.getBlockIndex();
 
   assert(blockSize > 0);
   assert(blockDifficulty > 0);
 
+
   Difficulty cumulativeDifficulty = 0;
-  uint64_t alreadyGeneratedCoins = 0;
+  boost::multiprecision::uint128_t alreadyGeneratedCoins = 0;
   uint64_t alreadyGeneratedTransactions = 0;
 
   if (getBlockCount() == 0) {
@@ -254,7 +260,7 @@ PushedBlockInfo BlockchainCache::getPushedBlockInfo(uint32_t blockIndex) const {
       pushedBlockInfo.generatedCoins = cachedBlock.alreadyGeneratedCoins;
     } else {
       Difficulty cumulativeDifficulty = parent->getLastCumulativeDifficulties(1, startIndex - 1, addGenesisBlock)[0];
-      uint64_t alreadyGeneratedCoins = parent->getAlreadyGeneratedCoins(startIndex - 1);
+      boost::multiprecision::uint128_t alreadyGeneratedCoins = parent->getAlreadyGeneratedCoins(startIndex - 1);
 
       pushedBlockInfo.blockDifficulty = cachedBlock.cumulativeDifficulty - cumulativeDifficulty;
       pushedBlockInfo.generatedCoins = cachedBlock.alreadyGeneratedCoins - alreadyGeneratedCoins;
@@ -931,9 +937,9 @@ ExtractOutputKeysResult BlockchainCache::extractKeyOutputs(
                                  << " because global index is greater than the last available: " << (startGlobalIndex + outputs.size());
       return ExtractOutputKeysResult::INVALID_GLOBAL_INDEX;
     }
-    
+
     auto outputIndex = outputs[globalIndex - startGlobalIndex];
-    
+
     assert(outputIndex.blockIndex >= startIndex);
     assert(outputIndex.blockIndex <= blockIndex);
 
@@ -1146,11 +1152,11 @@ Difficulty BlockchainCache::getCurrentCumulativeDifficulty(uint32_t blockIndex) 
   return blockInfos.get<BlockIndexTag>().at(blockIndex - startIndex).cumulativeDifficulty;
 }
 
-uint64_t BlockchainCache::getAlreadyGeneratedCoins() const {
+boost::multiprecision::uint128_t BlockchainCache::getAlreadyGeneratedCoins() const {
   return getAlreadyGeneratedCoins(getTopBlockIndex());
 }
 
-uint64_t BlockchainCache::getAlreadyGeneratedCoins(uint32_t blockIndex) const {
+boost::multiprecision::uint128_t BlockchainCache::getAlreadyGeneratedCoins(uint32_t blockIndex) const {
   if (blockIndex < startIndex) {
     assert(parent != nullptr);
     return parent->getAlreadyGeneratedCoins(blockIndex);

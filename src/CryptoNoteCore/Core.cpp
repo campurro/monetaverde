@@ -1092,7 +1092,7 @@ bool Core::getBlockTemplate(BlockTemplate& b, const AccountPublicAddress& adr, c
 
   assert(!chainsStorage.empty());
   assert(!chainsLeaves.empty());
-  uint64_t alreadyGeneratedCoins = chainsLeaves[0]->getAlreadyGeneratedCoins();
+  boost::multiprecision::uint128_t alreadyGeneratedCoins = chainsLeaves[0]->getAlreadyGeneratedCoins();
 
   size_t transactionsSize;
   uint64_t fee;
@@ -1199,7 +1199,7 @@ size_t Core::getAlternativeBlockCount() const {
   });
 }
 
-uint64_t Core::getTotalGeneratedAmount() const {
+boost::multiprecision::uint128_t Core::getTotalGeneratedAmount() const {
   assert(!chainsLeaves.empty());
   throwIfNotInitialized();
 

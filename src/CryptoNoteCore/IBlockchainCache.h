@@ -28,6 +28,8 @@
 #include "Common/ArrayView.h"
 #include <CryptoNoteCore/Difficulty.h>
 
+#include <boost/multiprecision/cpp_int.hpp>
+
 namespace CryptoNote {
 
 class ISerializer;
@@ -55,7 +57,7 @@ struct PushedBlockInfo {
   RawBlock rawBlock;
   TransactionValidatorState validatorState;
   size_t blockSize;
-  uint64_t generatedCoins;
+  boost::multiprecision::uint128_t generatedCoins;
   Difficulty blockDifficulty;
 };
 
@@ -70,7 +72,7 @@ public:
 private:
   bool use = false;
 };
-  
+
 struct CachedBlockInfo;
 struct CachedTransactionInfo;
 class ITransactionPool;
@@ -91,7 +93,7 @@ public:
       const std::vector<CachedTransaction>& cachedTransactions,
       const TransactionValidatorState& validatorState,
       size_t blockSize,
-      uint64_t generatedCoins,
+      boost::multiprecision::uint128_t generatedCoins,
       Difficulty blockDifficulty,
       RawBlock&& rawBlock) = 0;
   virtual PushedBlockInfo getPushedBlockInfo(uint32_t index) const = 0;
@@ -142,8 +144,8 @@ public:
   virtual Difficulty getCurrentCumulativeDifficulty() const = 0;
   virtual Difficulty getCurrentCumulativeDifficulty(uint32_t blockIndex) const = 0;
 
-  virtual uint64_t getAlreadyGeneratedCoins() const = 0;
-  virtual uint64_t getAlreadyGeneratedCoins(uint32_t blockIndex) const = 0;
+  virtual boost::multiprecision::uint128_t getAlreadyGeneratedCoins() const = 0;
+  virtual boost::multiprecision::uint128_t getAlreadyGeneratedCoins(uint32_t blockIndex) const = 0;
 
   virtual uint64_t getAlreadyGeneratedTransactions(uint32_t blockIndex) const = 0;
 

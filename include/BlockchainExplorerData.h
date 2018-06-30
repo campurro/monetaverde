@@ -25,12 +25,13 @@
 #include "CryptoNote.h"
 
 #include <boost/variant.hpp>
+#include <boost/multiprecision/cpp_int.hpp>
 
 namespace CryptoNote {
 
-enum class TransactionRemoveReason : uint8_t 
-{ 
-  INCLUDED_IN_BLOCK = 0, 
+enum class TransactionRemoveReason : uint8_t
+{
+  INCLUDED_IN_BLOCK = 0,
   TIMEOUT = 1
 };
 
@@ -63,7 +64,7 @@ struct MultisignatureInputDetails {
 typedef boost::variant<BaseInputDetails, KeyInputDetails, MultisignatureInputDetails> TransactionInputDetails;
 
 struct TransactionExtraDetails {
-  Crypto::PublicKey publicKey; 
+  Crypto::PublicKey publicKey;
   BinaryArray nonce;
   BinaryArray raw;
 };
@@ -102,7 +103,7 @@ struct BlockDetails {
   uint64_t baseReward = 0;
   uint64_t blockSize = 0;
   uint64_t transactionsCumulativeSize = 0;
-  uint64_t alreadyGeneratedCoins = 0;
+  boost::multiprecision::uint128_t alreadyGeneratedCoins = 0;
   uint64_t alreadyGeneratedTransactions = 0;
   uint64_t sizeMedian = 0;
   double penalty = 0.0;

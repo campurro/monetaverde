@@ -238,7 +238,7 @@ uint32_t Currency::upgradeHeight(uint8_t majorVersion) const {
     }
 }
 
-bool Currency::getBlockReward(uint8_t blockMajorVersion, size_t medianSize, size_t currentBlockSize, uint64_t alreadyGeneratedCoins,
+bool Currency::getBlockReward(uint8_t blockMajorVersion, size_t medianSize, size_t currentBlockSize, boost::multiprecision::uint128_t alreadyGeneratedCoins,
 	uint64_t fee, uint64_t& reward, int64_t& emissionChange, const Difficulty diff) const {
 
    assert(diff != 0);
@@ -307,7 +307,7 @@ size_t Currency::maxBlockCumulativeSize(uint64_t height) const {
     return maxSize;
 }
 
-bool Currency::constructMinerTx(uint8_t blockMajorVersion, uint32_t height, size_t medianSize, uint64_t alreadyGeneratedCoins, size_t currentBlockSize,
+bool Currency::constructMinerTx(uint8_t blockMajorVersion, uint32_t height, size_t medianSize, boost::multiprecision::uint128_t alreadyGeneratedCoins, size_t currentBlockSize,
                                 uint64_t fee, const AccountPublicAddress& minerAddress, Transaction& tx, const BinaryArray& extraNonce/* = BinaryArray()*/, size_t maxOuts/* = 1*/,
                             const Difficulty diff/* = 0*/) const {
 

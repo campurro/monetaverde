@@ -21,6 +21,8 @@
 #include <cstdint>
 
 #include <Common/StringView.h>
+#include <boost/multiprecision/cpp_int.hpp>
+#include <boost/multiprecision/cpp_int/serialize.hpp>
 
 namespace CryptoNote {
 
@@ -51,7 +53,7 @@ public:
   virtual bool operator()(double& value, Common::StringView name) = 0;
   virtual bool operator()(bool& value, Common::StringView name) = 0;
   virtual bool operator()(std::string& value, Common::StringView name) = 0;
-  
+
   // read/write binary block
   virtual bool binary(void* value, size_t size, Common::StringView name) = 0;
   virtual bool binary(std::string& value, Common::StringView name) = 0;
@@ -64,6 +66,7 @@ template<typename T>
 bool ISerializer::operator()(T& value, Common::StringView name) {
   return serialize(value, name, *this);
 }
+
 
 template<typename T>
 bool serialize(T& value, Common::StringView name, ISerializer& serializer) {
@@ -80,6 +83,7 @@ template<typename T>
 void serialize(T& value, ISerializer& serializer) {
   value.serialize(serializer);
 }
+
 
 #ifdef __clang__
 template<> inline

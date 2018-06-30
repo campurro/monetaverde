@@ -503,7 +503,7 @@ uint32_t InProcessNode::getKnownBlockCount() const {
   }
 
   RemotelySpawnedSyncContext<uint32_t> context(dispatcher, contextCounter, contextCounterEvent, [this] {
-    return protocol.getObservedHeight();
+    return protocol.getObservedHeight() - 1;
   });
 
   return context.get();
