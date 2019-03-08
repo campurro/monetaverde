@@ -264,7 +264,7 @@ bool handle_request_stat(po::variables_map& vm, PeerIdType peer_id) {
 
     proof_of_trust pot;
     pot.peer_id = peer_id;
-    pot.time = time(NULL);
+    pot.time = static_cast<uint64_t>(time(nullptr));
     Crypto::PublicKey pubk;
     Common::podFromHex(P2P_STAT_TRUSTED_PUB_KEY, pubk);
     Crypto::Hash h = get_proof_of_trust_hash(pot);

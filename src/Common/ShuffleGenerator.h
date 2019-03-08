@@ -25,7 +25,6 @@ public:
   SequenceEnded() : std::runtime_error("shuffle sequence ended") {
   }
 
-  ~SequenceEnded(){}
 };
 
 template <typename T, typename Gen>
