@@ -1,19 +1,11 @@
 // Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
-//
-// This file is part of Bytecoin.
-//
-// Bytecoin is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Bytecoin is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
-//
+// Copyright (c) 2017-2019, The Iridium developers
 // You should have received a copy of the GNU Lesser General Public License
 // along with Bytecoin.  If not, see <http://www.gnu.org/licenses/>.
+// Copyright (c) 2018, The BBSCoin Developers
+// Copyright (c) 2018, The Karbo Developers
+// Copyright (c) 2018, The TurtleCoin Developers
+// Copyright (c) 2018, The Iridium Developer
 
 #include "WalletGreen.h"
 
@@ -525,6 +517,28 @@ void WalletGreen::load(const std::string& path, const std::string& password, std
         subscribeWallets();
       }
     }
+  }
+
+  // Read all output keys cache
+  try {
+      std::vector<AccountPublicAddress> subscriptionList;
+      m_synchronizer.getSubscriptions(subscriptionList);
+      for (auto& addr : subscriptionList) {
+          auto sub = m_synchronizer.getSubscription(addr);
+          if (sub != nullptr) {
+              std::vector<TransactionOutputInformation> allTransfers;
+              ITransfersContainer* container = &sub->getContainer();
+              container->getOutputs(allTransfers, ITransfersContainer::IncludeAll);
+              m_logger(INFO, BRIGHT_WHITE) << "Known Transfers " << allTransfers.size();
+              for (auto& o : allTransfers) {
+                  if (o.type == TransactionTypes::OutputType::Key) {
+                      m_synchronizer.addPublicKeysSeen(addr, o.transactionHash, o.outputKey);
+                  }
+              }
+          }
+      }
+  } catch (const std::exception& e) {
+      m_logger(ERROR, BRIGHT_RED) << "Failed to read output keys!! Continue without output keys: " << e.what();
   }
 
   m_blockchainSynchronizer.addObserver(this);
