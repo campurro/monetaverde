@@ -5,18 +5,18 @@ Monetaverde is a cryptonight based cryptocurrency (ticker : MCN)
 
 This is the monetaverde core source code and binary release.
 
-[Main website](http://getmonetaverde.org)
+[Main website](https://mcn.green)
 
-[BitcoinTalk main announcement thread](https://bitcointalk.org/index.php?topic=653141.0)
+[BitcoinTalk main announcement thread](https://bitcointalk.org/index.php?topic=5069658)
 
-[monetaverde-wallet gui (source and binaries)](https://github.com/campurro/monetaverde-wallet)
+[monetaverde-wallet gui (source and binaries)](https://github.com/mcnproject/monetaverde-wallet)
 
 
 Libraries needed : boost >=1.58
 
 How to compile this :
 ```
-$ git clone https://github.com/campurro/monetaverde.git
+$ git clone https://github.com/mcnproject/monetaverde.git
 $ cd monetaverde
 $ mkdir build
 $ cd build
