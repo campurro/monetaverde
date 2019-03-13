@@ -17,6 +17,7 @@
 
 #include "CachedBlock.h"
 #include <Common/Varint.h>
+#include <MultiHashing/multihashing.h>
 #include "CryptoNoteConfig.h"
 #include "CryptoNoteTools.h"
 
@@ -62,7 +63,8 @@ const Crypto::Hash& CachedBlock::getBlockLongHash(cn_context& cryptoContext) con
         if (block.majorVersion == BLOCK_MAJOR_VERSION_1) {
             const auto& rawHashingBlock = getBlockHashingBinaryArray();
             blockLongHash = Hash();
-            cn_slow_hash_v6(cryptoContext, rawHashingBlock.data(), rawHashingBlock.size(), blockLongHash.get());
+            cn_slow_hash_multi(rawHashingBlock.data(), rawHashingBlock.size(), blockLongHash.get(), 0, 0);
+            // cn_slow_hash_v6(cryptoContext, rawHashingBlock.data(), rawHashingBlock.size(), blockLongHash.get());
         } else if (block.majorVersion == BLOCK_MAJOR_VERSION_2) {
             const auto& rawHashingBlock = getParentBlockHashingBinaryArray(true);
             blockLongHash = Hash();

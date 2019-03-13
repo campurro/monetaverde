@@ -1,4 +1,6 @@
 add_definitions(-DSTATICLIB)
+add_definitions(-D__STDC_FORMAT_MACROS)
+add_definitions(-DUNICODE)
 
 include_directories(${CMAKE_SOURCE_DIR}/external/rocksdb/include)
 include_directories(${CMAKE_SOURCE_DIR}/src/MultiHashing/xmrig)

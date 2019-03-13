@@ -33,7 +33,7 @@ void callback(char* data, void* hint) {
     free(data);
 }
 
-static void cn_slow_hash_multi (void *restrict context, const void *restrict data, size_t length, void *restrict hash, int variant);
+static void cn_slow_hash_multi (const void *data, size_t length, void *hash, int variant, int height);
 
 /*
 NAN_METHOD(cryptonight) {
