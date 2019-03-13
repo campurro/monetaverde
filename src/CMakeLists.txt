@@ -1,11 +1,13 @@
 add_definitions(-DSTATICLIB)
 
 include_directories(${CMAKE_SOURCE_DIR}/external/rocksdb/include)
+include_directories(${CMAKE_SOURCE_DIR}/src/MultiHashing/xmrig)
 
 file(GLOB_RECURSE BlockchainExplorer BlockchainExplorer/*)
 file(GLOB_RECURSE Common Common/*)
 file(GLOB_RECURSE ConnectivityTool ConnectivityTool/*)
 file(GLOB_RECURSE Crypto crypto/*)
+file(GLOB_RECURSE MultiHashing MultiHashing/*)
 file(GLOB_RECURSE CryptoNoteCore CryptoNoteCore/* CryptoNoteConfig.h)
 file(GLOB_RECURSE CryptoNoteProtocol CryptoNoteProtocol/*)
 file(GLOB_RECURSE Daemon Daemon/*)
@@ -39,6 +41,7 @@ source_group("" FILES $${Common} ${ConnectivityTool} ${Crypto} ${CryptoNoteCore}
 add_library(BlockchainExplorer ${BlockchainExplorer})
 add_library(Common ${Common})
 add_library(Crypto ${Crypto})
+add_library(MultiHashing ${MultiHashing})
 add_library(CryptoNoteCore ${CryptoNoteCore})
 add_library(Http ${Http})
 add_library(InProcessNode ${InProcessNode})
