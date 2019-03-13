@@ -1512,6 +1512,13 @@ std::error_code Core::validateBlock(const CachedBlock& cachedBlock, IBlockchainC
   }
 
   if (block.majorVersion >= BLOCK_MAJOR_VERSION_2) {
+    if (block.majorVersion == BLOCK_MAJOR_VERSION_2 && block.parentBlock.majorVersion > BLOCK_MAJOR_VERSION_1) {
+      logger(Logging::ERROR, Logging::BRIGHT_RED) << "Parent block of block " << cachedBlock.getBlockHash() << " has wrong major version: "
+                                << static_cast<int>(block.parentBlock.majorVersion) << ", at index " << cachedBlock.getBlockIndex()
+                                << " expected version is " << static_cast<int>(BLOCK_MAJOR_VERSION_1);
+      return error::BlockValidationError::PARENT_BLOCK_WRONG_VERSION;
+    }
+
     if (cachedBlock.getParentBlockBinaryArray(false).size() > 2048) {
       return error::BlockValidationError::PARENT_BLOCK_SIZE_TOO_BIG;
     }
