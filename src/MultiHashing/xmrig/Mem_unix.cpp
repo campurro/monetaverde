@@ -26,6 +26,9 @@
 
 #include <stdlib.h>
 #include <sys/mman.h>
+#   if defined(__APPLE__)
+#include <mach/vm_statistics.h>
+#   endif
 
 
 #include "common/utils/mm_malloc.h"

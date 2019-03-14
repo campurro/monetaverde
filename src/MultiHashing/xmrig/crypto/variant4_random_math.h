@@ -175,7 +175,7 @@ static FORCEINLINE void check_data(size_t* data_index, const size_t bytes_needed
 {
 	if (*data_index + bytes_needed > data_size)
 	{
-		hash_extra_blake(data, data_size, (char*) data);
+		xmrig_hash_extra_blake(data, data_size, (char*) data);
 		*data_index = 0;
 	}
 }

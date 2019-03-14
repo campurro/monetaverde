@@ -166,7 +166,7 @@
 
 #define SWAP32LE(x) x
 #define SWAP64LE(x) x
-#define hash_extra_blake(data, length, hash) blake256_hash((uint8_t*)(hash), (uint8_t*)(data), (length))
+#define xmrig_hash_extra_blake(data, length, hash) blake256_hash((uint8_t*)(hash), (uint8_t*)(data), (length))
 
 #ifndef NOINLINE
 #ifdef __GNUC__

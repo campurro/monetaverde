@@ -1,15 +1,50 @@
 add_definitions(-DSTATICLIB)
 add_definitions(-D__STDC_FORMAT_MACROS)
-add_definitions(-DUNICODE)
 
 include_directories(${CMAKE_SOURCE_DIR}/external/rocksdb/include)
+
 include_directories(${CMAKE_SOURCE_DIR}/src/MultiHashing/xmrig)
+#file(GLOB_RECURSE MultiHashing MultiHashing/*)
+set(MultiHashing
+    MultiHashing/multihashing.cpp
+    MultiHashing/xmrig/extra.cpp
+    MultiHashing/xmrig/Mem.cpp
+    MultiHashing/xmrig/crypto/c_blake256.c
+    MultiHashing/xmrig/crypto/c_groestl.c
+    MultiHashing/xmrig/crypto/c_jh.c
+    MultiHashing/xmrig/crypto/c_skein.c
+    MultiHashing/xmrig/common/crypto/keccak.cpp
+    MultiHashing/xmrig/crypto/CryptoNight.h
+    MultiHashing/xmrig/crypto/CryptoNight_constants.h
+    MultiHashing/xmrig/crypto/CryptoNight_monero.h
+    MultiHashing/xmrig/crypto/groestl_tables.h
+    MultiHashing/xmrig/crypto/hash.h
+    MultiHashing/xmrig/crypto/skein_port.h
+    MultiHashing/xmrig/crypto/soft_aes.h
+    MultiHashing/xmrig/crypto/asm/CryptonightR_template.h
+  )
+
+if (WIN32)
+  set(MultiHashing_OS
+      MultiHashing/xmrig/Mem_win.cpp
+  )
+else ()
+  set(MultiHashing_OS
+      MultiHashing/xmrig/Mem_unix.cpp
+  )
+endif ()
+
+if (XMRIG_ARM)
+    set(MultiHashing_OS "${MultiHashing_OS}" MultiHashing/xmrig/crypto/CryptoNight_arm.h)
+else()
+    set(MultiHashing_OS "${MultiHashing_OS}" MultiHashing/xmrig/crypto/CryptoNight_x86.h)
+endif()
+
 
 file(GLOB_RECURSE BlockchainExplorer BlockchainExplorer/*)
 file(GLOB_RECURSE Common Common/*)
 file(GLOB_RECURSE ConnectivityTool ConnectivityTool/*)
 file(GLOB_RECURSE Crypto crypto/*)
-file(GLOB_RECURSE MultiHashing MultiHashing/*)
 file(GLOB_RECURSE CryptoNoteCore CryptoNoteCore/* CryptoNoteConfig.h)
 file(GLOB_RECURSE CryptoNoteProtocol CryptoNoteProtocol/*)
 file(GLOB_RECURSE Daemon Daemon/*)
@@ -43,7 +78,7 @@ source_group("" FILES $${Common} ${ConnectivityTool} ${Crypto} ${CryptoNoteCore}
 add_library(BlockchainExplorer ${BlockchainExplorer})
 add_library(Common ${Common})
 add_library(Crypto ${Crypto})
-add_library(MultiHashing ${MultiHashing})
+add_library(MultiHashing ${MultiHashing} ${MultiHashing_OS})
 add_library(CryptoNoteCore ${CryptoNoteCore})
 add_library(Http ${Http})
 add_library(InProcessNode ${InProcessNode})
@@ -75,7 +110,7 @@ target_link_libraries(P2P CryptoNoteCore Logging ${Boost_LIBRARIES} upnpc-static
 target_link_libraries(Rpc CryptoNoteCore Logging P2P)
 
 target_link_libraries(ConnectivityTool CryptoNoteCore Common Logging Crypto P2P Rpc Http Serialization System ${Boost_LIBRARIES})
-target_link_libraries(Daemon P2P Rpc Serialization System Http Logging CryptoNoteCore Crypto Common upnpc-static rocksdb ${Boost_LIBRARIES} )
+target_link_libraries(Daemon P2P Rpc Serialization System Http Logging CryptoNoteCore Crypto MultiHashing Common upnpc-static rocksdb ${Boost_LIBRARIES} )
 target_link_libraries(SimpleWallet Wallet NodeRpcProxy Transfers Rpc P2P upnpc-static Http Serialization CryptoNoteCore System Logging Common Crypto ${Boost_LIBRARIES})
 target_link_libraries(PaymentGateService PaymentGate JsonRpcServer Wallet NodeRpcProxy Transfers P2P CryptoNoteCore Crypto Rpc Http Serialization System Logging Common InProcessNode upnpc-static BlockchainExplorer rocksdb ${Boost_LIBRARIES})
 target_link_libraries(Miner CryptoNoteCore Rpc Serialization System Http Logging Common Crypto ${Boost_LIBRARIES})

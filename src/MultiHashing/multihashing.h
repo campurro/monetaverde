@@ -15,6 +15,7 @@
 #endif
 
 #include "xmrig/Mem.h"
+#include "CryptoTypes.h"
 
 #if (defined(__AES__) && (__AES__ == 1)) || (defined(__ARM_FEATURE_CRYPTO) && (__ARM_FEATURE_CRYPTO == 1))
 #define SOFT_AES false
@@ -34,7 +35,10 @@ void callback(char* data, void* hint) {
     free(data);
 }
 
-static void cn_slow_hash_multi (const void *data, size_t length, void *hash, int variant, int height);
+void cn_slow_hash_multihash (const void *data, size_t length, void *hash, int variant, int height);
+inline void cn_slow_hash_multi (const void *data, size_t length, Crypto::Hash &hash, int variant, int height){
+    cn_slow_hash_multihash(data, length, reinterpret_cast<void *>(&hash), 0, 0);
+}
 
 /*
 NAN_METHOD(cryptonight) {
