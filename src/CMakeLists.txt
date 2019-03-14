@@ -4,6 +4,7 @@ add_definitions(-D__STDC_FORMAT_MACROS)
 include_directories(${CMAKE_SOURCE_DIR}/external/rocksdb/include)
 
 include_directories(${CMAKE_SOURCE_DIR}/src/MultiHashing/xmrig)
+include_directories(${CMAKE_SOURCE_DIR}/src/MultiHashing/xmrig/3rdparty)
 #file(GLOB_RECURSE MultiHashing MultiHashing/*)
 set(MultiHashing
     MultiHashing/multihashing.cpp
@@ -40,6 +41,193 @@ else()
     set(MultiHashing_OS "${MultiHashing_OS}" MultiHashing/xmrig/crypto/CryptoNight_x86.h)
 endif()
 
+#################### CPU ###############################
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64)$")
+    add_definitions(/DRAPIDJSON_SSE2)
+endif()
+
+if (NOT ARM_TARGET)
+    if (CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64|armv8-a)$")
+        set(ARM_TARGET 8)
+    elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "^(armv7|armv7f|armv7s|armv7k|armv7-a|armv7l)$")
+        set(ARM_TARGET 7)
+    endif()
+endif()
+
+if (ARM_TARGET AND ARM_TARGET GREATER 6)
+    set(XMRIG_ARM     ON)
+    set(WITH_LIBCPUID OFF)
+    add_definitions(/DXMRIG_ARM)
+
+    message(STATUS "Use ARM_TARGET=${ARM_TARGET} (${CMAKE_SYSTEM_PROCESSOR})")
+
+    include(CheckCXXCompilerFlag)
+
+    if (ARM_TARGET EQUAL 8)
+        set(XMRIG_ARMv8 ON)
+        add_definitions(/DXMRIG_ARMv8)
+
+        CHECK_CXX_COMPILER_FLAG(-march=armv8-a+crypto XMRIG_ARM_CRYPTO)
+
+        if (XMRIG_ARM_CRYPTO)
+            add_definitions(/DXMRIG_ARM_CRYPTO)
+            set(ARM8_CXX_FLAGS "-march=armv8-a+crypto")
+        else()
+            set(ARM8_CXX_FLAGS "-march=armv8-a")
+        endif()
+    elseif (ARM_TARGET EQUAL 7)
+        set(XMRIG_ARMv7 ON)
+        add_definitions(/DXMRIG_ARMv7)
+    endif()
+endif()
+########################################################
+################# FLAGS ################################
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 11)
+
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "")
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_definitions(/DNDEBUG)
+endif()
+
+if (CMAKE_CXX_COMPILER_ID MATCHES GNU)
+
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-strict-aliasing")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Ofast")
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-class-memaccess")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast -s")
+
+    if (XMRIG_ARMv8)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ARM8_CXX_FLAGS}")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ARM8_CXX_FLAGS} -flax-vector-conversions")
+    elseif (XMRIG_ARMv7)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpu=neon")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpu=neon -flax-vector-conversions")
+    else()
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -maes")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -maes")
+    endif()
+
+    if (WIN32)
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
+    else()
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
+    endif()
+
+    add_definitions(/D_GNU_SOURCE)
+
+    if (${CMAKE_VERSION} VERSION_LESS "3.1.0")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    endif()
+
+    #set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -gdwarf-2")
+
+elseif (CMAKE_CXX_COMPILER_ID MATCHES MSVC)
+
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /Ox /Ot /Oi /MT /GL")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Ox /Ot /Oi /MT /GL")
+    add_definitions(/D_CRT_SECURE_NO_WARNINGS)
+    add_definitions(/D_CRT_NONSTDC_NO_WARNINGS)
+    add_definitions(/DNOMINMAX)
+
+elseif (CMAKE_CXX_COMPILER_ID MATCHES Clang)
+
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Ofast -funroll-loops -fmerge-all-constants")
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-missing-braces")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast -funroll-loops -fmerge-all-constants")
+
+    if (XMRIG_ARMv8)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ARM8_CXX_FLAGS}")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ARM8_CXX_FLAGS}")
+    elseif (XMRIG_ARMv7)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpu=neon -march=${CMAKE_SYSTEM_PROCESSOR}")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpu=neon -march=${CMAKE_SYSTEM_PROCESSOR}")
+    else()
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -maes")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -maes")
+    endif()
+
+endif()
+########################################################
+################### ASM ####################################
+if (WITH_ASM AND NOT XMRIG_ARM AND CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(XMRIG_ASM_LIBRARY "xmrig-asm")
+
+    if (CMAKE_C_COMPILER_ID MATCHES MSVC)
+        enable_language(ASM_MASM)
+
+        if (MSVC_TOOLSET_VERSION GREATER_EQUAL 141)
+            set(XMRIG_ASM_FILES
+                "src/crypto/asm/cn_main_loop.asm"
+                "src/crypto/asm/CryptonightR_template.asm"
+            )
+        else()
+            set(XMRIG_ASM_FILES
+                "src/crypto/asm/win64/cn_main_loop.asm"
+                "src/crypto/asm/win64/CryptonightR_template.asm"
+            )
+        endif()
+
+        set_property(SOURCE ${XMRIG_ASM_FILES} PROPERTY ASM_MASM)
+    else()
+        enable_language(ASM)
+
+        if (WIN32 AND CMAKE_C_COMPILER_ID MATCHES GNU)
+            set(XMRIG_ASM_FILES
+                "src/crypto/asm/win64/cn_main_loop.S"
+                "src/crypto/asm/CryptonightR_template.S"
+            )
+        else()
+            set(XMRIG_ASM_FILES
+                "src/crypto/asm/cn_main_loop.S"
+                "src/crypto/asm/CryptonightR_template.S"
+            )
+        endif()
+
+        set_property(SOURCE ${XMRIG_ASM_FILES} PROPERTY C)
+    endif()
+
+    add_library(${XMRIG_ASM_LIBRARY} STATIC ${XMRIG_ASM_FILES})
+    set(XMRIG_ASM_SOURCES src/crypto/Asm.h src/crypto/Asm.cpp src/crypto/CryptonightR_gen.cpp)
+    set_property(TARGET ${XMRIG_ASM_LIBRARY} PROPERTY LINKER_LANGUAGE C)
+else()
+    set(XMRIG_ASM_SOURCES "")
+    set(XMRIG_ASM_LIBRARY "")
+    add_definitions(/DXMRIG_NO_ASM)
+endif()
+###################################################################
+############################### CN GPU ############################
+if (WITH_CN_GPU AND CMAKE_SIZEOF_VOID_P EQUAL 8)
+
+    if (XMRIG_ARM)
+        set(CN_GPU_SOURCES src/crypto/cn_gpu_arm.cpp)
+
+        if (CMAKE_CXX_COMPILER_ID MATCHES GNU OR CMAKE_CXX_COMPILER_ID MATCHES Clang)
+            set_source_files_properties(src/crypto/cn_gpu_arm.cpp PROPERTIES COMPILE_FLAGS "-O3")
+        endif()
+    else()
+        set(CN_GPU_SOURCES src/crypto/cn_gpu_avx.cpp src/crypto/cn_gpu_ssse3.cpp)
+
+        if (CMAKE_CXX_COMPILER_ID MATCHES GNU OR CMAKE_CXX_COMPILER_ID MATCHES Clang)
+            set_source_files_properties(src/crypto/cn_gpu_avx.cpp PROPERTIES COMPILE_FLAGS "-O3 -mavx2")
+            set_source_files_properties(src/crypto/cn_gpu_ssse3.cpp PROPERTIES COMPILE_FLAGS "-O3")
+        elseif (CMAKE_CXX_COMPILER_ID MATCHES MSVC)
+            set_source_files_properties(src/crypto/cn_gpu_avx.cpp PROPERTIES COMPILE_FLAGS "/arch:AVX")
+        endif()
+    endif()
+else()
+    set(CN_GPU_SOURCES "")
+
+    add_definitions(/DXMRIG_NO_CN_GPU)
+endif()
+#####################################################################
 
 file(GLOB_RECURSE BlockchainExplorer BlockchainExplorer/*)
 file(GLOB_RECURSE Common Common/*)
@@ -78,8 +266,8 @@ source_group("" FILES $${Common} ${ConnectivityTool} ${Crypto} ${CryptoNoteCore}
 add_library(BlockchainExplorer ${BlockchainExplorer})
 add_library(Common ${Common})
 add_library(Crypto ${Crypto})
-add_library(MultiHashing ${MultiHashing} ${MultiHashing_OS})
-add_library(CryptoNoteCore ${CryptoNoteCore})
+#add_library(MultiHashing ${MultiHashing} ${MultiHashing_OS})
+add_library(CryptoNoteCore ${CryptoNoteCore} ${MultiHashing} ${MultiHashing_OS})
 add_library(Http ${Http})
 add_library(InProcessNode ${InProcessNode})
 add_library(Logging ${Logging})
@@ -110,7 +298,7 @@ target_link_libraries(P2P CryptoNoteCore Logging ${Boost_LIBRARIES} upnpc-static
 target_link_libraries(Rpc CryptoNoteCore Logging P2P)
 
 target_link_libraries(ConnectivityTool CryptoNoteCore Common Logging Crypto P2P Rpc Http Serialization System ${Boost_LIBRARIES})
-target_link_libraries(Daemon P2P Rpc Serialization System Http Logging CryptoNoteCore Crypto MultiHashing Common upnpc-static rocksdb ${Boost_LIBRARIES} )
+target_link_libraries(Daemon P2P Rpc Serialization System Http Logging CryptoNoteCore Crypto Common upnpc-static rocksdb ${Boost_LIBRARIES} )
 target_link_libraries(SimpleWallet Wallet NodeRpcProxy Transfers Rpc P2P upnpc-static Http Serialization CryptoNoteCore System Logging Common Crypto ${Boost_LIBRARIES})
 target_link_libraries(PaymentGateService PaymentGate JsonRpcServer Wallet NodeRpcProxy Transfers P2P CryptoNoteCore Crypto Rpc Http Serialization System Logging Common InProcessNode upnpc-static BlockchainExplorer rocksdb ${Boost_LIBRARIES})
 target_link_libraries(Miner CryptoNoteCore Rpc Serialization System Http Logging Common Crypto ${Boost_LIBRARIES})

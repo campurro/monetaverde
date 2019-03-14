@@ -122,7 +122,7 @@ std::vector<Crypto::Hash> getBlockHashes(const CryptoNote::CompleteBlock* blocks
 namespace CryptoNote {
 
 TransfersConsumer::TransfersConsumer(const CryptoNote::Currency& currency, INode& node, Logging::ILogger& logger, const SecretKey& viewSecret) :
-  m_node(node), m_viewSecret(viewSecret), m_currency(currency), m_logger(logger, "TransfersConsumer") {
+  m_viewSecret(viewSecret), m_node(node), m_currency(currency), m_logger(logger, "TransfersConsumer") {
   updateSyncStart();
 }
 

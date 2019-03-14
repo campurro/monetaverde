@@ -363,16 +363,16 @@ multisignatureOutputGlobalIndexesForAmounts(std::move(state.multisignatureOutput
 spentMultisignatureOutputGlobalIndexesByBlocks(std::move(state.spentMultisignatureOutputGlobalIndexesByBlocks)),
 multisignatureOutputsSpendingStatuses(std::move(state.multisignatureOutputsSpendingStatuses)),
 rawBlocks(std::move(state.rawBlocks)),
-blockHashesByTimestamp(std::move(state.blockHashesByTimestamp)),
-keyOutputKeys(std::move(state.keyOutputKeys)),
 closestTimestampBlockIndex(std::move(state.closestTimestampBlockIndex)),
-lastBlockIndex(std::move(state.lastBlockIndex)),
-keyOutputAmountsCount(std::move(state.keyOutputAmountsCount)),
-multisignatureOutputAmountsCount(std::move(state.multisignatureOutputAmountsCount)),
 keyOutputAmounts(std::move(state.keyOutputAmounts)),
 multisignatureOutputAmounts(std::move(state.multisignatureOutputAmounts)),
 transactionCountsByPaymentIds(std::move(state.transactionCountsByPaymentIds)),
 transactionHashesByPaymentIds(std::move(state.transactionHashesByPaymentIds)),
+blockHashesByTimestamp(std::move(state.blockHashesByTimestamp)),
+keyOutputKeys(std::move(state.keyOutputKeys)),
+lastBlockIndex(std::move(state.lastBlockIndex)),
+keyOutputAmountsCount(std::move(state.keyOutputAmountsCount)),
+multisignatureOutputAmountsCount(std::move(state.multisignatureOutputAmountsCount)),
 transactionsCount(std::move(state.transactionsCount)) {
 }
 

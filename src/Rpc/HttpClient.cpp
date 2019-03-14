@@ -25,7 +25,7 @@
 namespace CryptoNote {
 
 HttpClient::HttpClient(System::Dispatcher& dispatcher, const std::string& address, uint16_t port) :
-  m_dispatcher(dispatcher), m_address(address), m_port(port) {
+  m_address(address), m_port(port), m_dispatcher(dispatcher) {
 }
 
 HttpClient::~HttpClient() {

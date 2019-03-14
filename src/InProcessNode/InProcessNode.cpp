@@ -147,8 +147,8 @@ uint64_t getBlockReward(const BlockTemplate& block) {
 
 InProcessNode::InProcessNode(CryptoNote::ICore& core, CryptoNote::ICryptoNoteProtocolHandler& protocol,
                              System::Dispatcher& disp)
-    : state(NOT_INITIALIZED), contextGroup(dispatcher), contextCounter(0), contextCounterEvent(disp), core(core), protocol(protocol),
-      messageQueue(dispatcher), dispatcher(disp) {
+    : state(NOT_INITIALIZED), dispatcher(disp), contextCounter(0), contextCounterEvent(disp), contextGroup(dispatcher), core(core), protocol(protocol),
+      messageQueue(dispatcher)  {
   resetLastLocalBlockHeaderInfo();
 }
 
