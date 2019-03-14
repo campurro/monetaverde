@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <sys/mman.h>
 
 //#if (defined(__AES__) && (__AES__ == 1)) || defined(__APPLE__) || defined(__ARM_ARCH)
 //#else
