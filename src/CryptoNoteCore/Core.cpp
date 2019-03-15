@@ -547,7 +547,7 @@ std::vector<Crypto::Hash> Core::findBlockchainSupplement(const std::vector<Crypt
 
 std::error_code Core::addBlock(const CachedBlock& cachedBlock, RawBlock&& rawBlock) {
   throwIfNotInitialized();
-  logger(Logging::DEBUGGING) << "Request to add block came for block " << cachedBlock.getBlockHash() << ' ' << cachedBlock.getBlock().majorVersion << '.' << cachedBlock.getBlock().minorVersion;
+  logger(Logging::DEBUGGING) << "Request to add block came for block " << cachedBlock.getBlockHash();
 
   if (hasBlock(cachedBlock.getBlockHash())) {
     logger(Logging::DEBUGGING) << "Block " << cachedBlock.getBlockHash() << " already exists";
@@ -662,7 +662,7 @@ std::error_code Core::addBlock(const CachedBlock& cachedBlock, RawBlock&& rawBlo
         actualizePoolTransactionsLite(validatorState);
 
         ret = error::AddBlockErrorCode::ADDED_TO_MAIN;
-        logger(Logging::DEBUGGING) << "Block " << cachedBlock.getBlockHash() << " added to main chain. Index: " << (previousBlockIndex + 1);
+        logger(Logging::DEBUGGING) << "Block " << cachedBlock.getBlockHash() << " added to main chain. Index: " << (previousBlockIndex + 1) << ' ' << cachedBlock.getBlock().majorVersion << '.' << cachedBlock.getBlock().minorVersion;
         if ((previousBlockIndex + 1) % 100 == 0) {
           logger(Logging::INFO) << "Block " << cachedBlock.getBlockHash() << " added to main chain. Index: " << (previousBlockIndex + 1);
         }
