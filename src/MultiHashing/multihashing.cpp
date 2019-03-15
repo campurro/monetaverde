@@ -138,9 +138,36 @@ void cn_slow_hash_multihash (const void *data, size_t length, void *hash, int va
         ///////////////////////////////////////////////////////
         /// CRYPTONIGHT LITE
         ///////////////////////////////////////////////////////
-        case 50:  cryptonight_single_hash<xmrig::CRYPTONIGHT_LITE, SOFT_AES, xmrig::VARIANT_0>  (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
+        case 20:  cryptonight_single_hash<xmrig::CRYPTONIGHT_LITE, SOFT_AES, xmrig::VARIANT_0>  (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
                 break;
-        case 51:  cryptonight_single_hash<xmrig::CRYPTONIGHT_LITE, SOFT_AES, xmrig::VARIANT_1>  (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
+        case 21:  cryptonight_single_hash<xmrig::CRYPTONIGHT_LITE, SOFT_AES, xmrig::VARIANT_1>  (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
+                break;
+
+
+        ///////////////////////////////////////////////////////
+        /// CRYPTONIGHT HEAVY
+        ///////////////////////////////////////////////////////
+        case 30:  cryptonight_single_hash<xmrig::CRYPTONIGHT_HEAVY, SOFT_AES, xmrig::VARIANT_0>  (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
+                break;
+        case 31:  cryptonight_single_hash<xmrig::CRYPTONIGHT_HEAVY, SOFT_AES, xmrig::VARIANT_XHV>  (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
+                break;
+        case 32:  cryptonight_single_hash<xmrig::CRYPTONIGHT_HEAVY, SOFT_AES, xmrig::VARIANT_TUBE>  (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
+                break;
+        
+
+        ///////////////////////////////////////////////////////
+        /// CRYPTONIGHT PICO
+        ///////////////////////////////////////////////////////
+        case 40:  
+#if !SOFT_AES && defined(CPU_INTEL)
+                cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_PICO, xmrig::VARIANT_TRTL, xmrig::ASM_INTEL>     (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
+#elif !SOFT_AES && defined(CPU_AMD)
+                cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_PICO, xmrig::VARIANT_TRTL, xmrig::ASM_RYZEN>     (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
+#elif !SOFT_AES && defined(CPU_AMD_OLD)
+                cryptonight_single_hash_asm<xmrig::CRYPTONIGHT_PICO, xmrig::VARIANT_TRTL, xmrig::ASM_BULLDOZER> (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
+#else
+                cryptonight_single_hash    <xmrig::CRYPTONIGHT_PICO, SOFT_AES, xmrig::VARIANT_TRTL>             (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
+#endif
                 break;
         
 
