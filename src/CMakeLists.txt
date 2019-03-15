@@ -3,26 +3,33 @@ add_definitions(-D__STDC_FORMAT_MACROS)
 
 include_directories(${CMAKE_SOURCE_DIR}/external/rocksdb/include)
 
+option(WITH_AEON            "CryptoNight-Lite support" ON)
+option(WITH_SUMO            "CryptoNight-Heavy support" ON)
+option(WITH_CN_PICO         "CryptoNight-Pico support" ON)
+option(WITH_CN_GPU          "CryptoNight-GPU support" ON)
+
 include_directories(${CMAKE_SOURCE_DIR}/src/MultiHashing/xmrig)
 include_directories(${CMAKE_SOURCE_DIR}/src/MultiHashing/xmrig/3rdparty)
 #file(GLOB_RECURSE MultiHashing MultiHashing/*)
 set(MultiHashing
     MultiHashing/multihashing.cpp
-    MultiHashing/xmrig/extra.cpp
+#    MultiHashing/xmrig/extra.cpp
     MultiHashing/xmrig/Mem.cpp
     MultiHashing/xmrig/crypto/c_blake256.c
     MultiHashing/xmrig/crypto/c_groestl.c
     MultiHashing/xmrig/crypto/c_jh.c
     MultiHashing/xmrig/crypto/c_skein.c
     MultiHashing/xmrig/common/crypto/keccak.cpp
-    MultiHashing/xmrig/crypto/CryptoNight.h
-    MultiHashing/xmrig/crypto/CryptoNight_constants.h
-    MultiHashing/xmrig/crypto/CryptoNight_monero.h
-    MultiHashing/xmrig/crypto/groestl_tables.h
-    MultiHashing/xmrig/crypto/hash.h
-    MultiHashing/xmrig/crypto/skein_port.h
-    MultiHashing/xmrig/crypto/soft_aes.h
-    MultiHashing/xmrig/crypto/asm/CryptonightR_template.h
+
+
+#    MultiHashing/xmrig/crypto/CryptoNight.h
+#    MultiHashing/xmrig/crypto/CryptoNight_constants.h
+#    MultiHashing/xmrig/crypto/CryptoNight_monero.h
+#    MultiHashing/xmrig/crypto/groestl_tables.h
+#    MultiHashing/xmrig/crypto/hash.h
+#    MultiHashing/xmrig/crypto/skein_port.h
+#    MultiHashing/xmrig/crypto/soft_aes.h
+#    MultiHashing/xmrig/crypto/asm/CryptonightR_template.h
   )
 
 if (WIN32)
@@ -35,8 +42,19 @@ else ()
   )
 endif ()
 
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64)$")
+    set(MultiHashing "${MultiHashing}" 
+        MultiHashing/xmrig/crypto/cn_gpu_ssse3.cpp
+#        MultiHashing/xmrig/crypto/cn_gpu_arm.cpp
+        MultiHashing/xmrig/common/cpu/Cpu.cpp
+        MultiHashing/xmrig/common/cpu/BasicCpuInfo.cpp
+#        MultiHashing/xmrig/common/cpu/BasicCpuInfo_arm.cpp
+    )
+endif ()
+
 if (XMRIG_ARM)
     set(MultiHashing_OS "${MultiHashing_OS}" MultiHashing/xmrig/crypto/CryptoNight_arm.h)
+    message(WARNING "METIENDO EL CryptoNight_arm.h")
 else()
     set(MultiHashing_OS "${MultiHashing_OS}" MultiHashing/xmrig/crypto/CryptoNight_x86.h)
 endif()
@@ -195,7 +213,7 @@ if (WITH_ASM AND NOT XMRIG_ARM AND CMAKE_SIZEOF_VOID_P EQUAL 8)
     endif()
 
     add_library(${XMRIG_ASM_LIBRARY} STATIC ${XMRIG_ASM_FILES})
-    set(XMRIG_ASM_SOURCES src/crypto/Asm.h src/crypto/Asm.cpp src/crypto/CryptonightR_gen.cpp)
+    set(XMRIG_ASM_SOURCES MultiHashing/xmrig/crypto/Asm.h MultiHashing/xmrig/crypto/Asm.cpp MultiHashing/xmrig/crypto/CryptonightR_gen.cpp)
     set_property(TARGET ${XMRIG_ASM_LIBRARY} PROPERTY LINKER_LANGUAGE C)
 else()
     set(XMRIG_ASM_SOURCES "")
@@ -207,19 +225,19 @@ endif()
 if (WITH_CN_GPU AND CMAKE_SIZEOF_VOID_P EQUAL 8)
 
     if (XMRIG_ARM)
-        set(CN_GPU_SOURCES src/crypto/cn_gpu_arm.cpp)
+        set(CN_GPU_SOURCES MultiHashing/xmrig/crypto/cn_gpu_arm.cpp)
 
         if (CMAKE_CXX_COMPILER_ID MATCHES GNU OR CMAKE_CXX_COMPILER_ID MATCHES Clang)
-            set_source_files_properties(src/crypto/cn_gpu_arm.cpp PROPERTIES COMPILE_FLAGS "-O3")
+            set_source_files_properties(MultiHashing/xmrig/crypto/cn_gpu_arm.cpp PROPERTIES COMPILE_FLAGS "-O3")
         endif()
     else()
-        set(CN_GPU_SOURCES src/crypto/cn_gpu_avx.cpp src/crypto/cn_gpu_ssse3.cpp)
+        set(CN_GPU_SOURCES MultiHashing/xmrig/crypto/cn_gpu_avx.cpp MultiHashing/xmrig/crypto/cn_gpu_ssse3.cpp)
 
         if (CMAKE_CXX_COMPILER_ID MATCHES GNU OR CMAKE_CXX_COMPILER_ID MATCHES Clang)
-            set_source_files_properties(src/crypto/cn_gpu_avx.cpp PROPERTIES COMPILE_FLAGS "-O3 -mavx2")
-            set_source_files_properties(src/crypto/cn_gpu_ssse3.cpp PROPERTIES COMPILE_FLAGS "-O3")
+            set_source_files_properties(MultiHashing/xmrig/crypto/cn_gpu_avx.cpp PROPERTIES COMPILE_FLAGS "-O3 -mavx2")
+            set_source_files_properties(MultiHashing/xmrig/crypto/cn_gpu_ssse3.cpp PROPERTIES COMPILE_FLAGS "-O3")
         elseif (CMAKE_CXX_COMPILER_ID MATCHES MSVC)
-            set_source_files_properties(src/crypto/cn_gpu_avx.cpp PROPERTIES COMPILE_FLAGS "/arch:AVX")
+            set_source_files_properties(MultiHashing/xmrig/crypto/cn_gpu_avx.cpp PROPERTIES COMPILE_FLAGS "/arch:AVX")
         endif()
     endif()
 else()
@@ -267,7 +285,7 @@ add_library(BlockchainExplorer ${BlockchainExplorer})
 add_library(Common ${Common})
 add_library(Crypto ${Crypto})
 #add_library(MultiHashing ${MultiHashing} ${MultiHashing_OS})
-add_library(CryptoNoteCore ${CryptoNoteCore} ${MultiHashing} ${MultiHashing_OS})
+add_library(CryptoNoteCore ${CryptoNoteCore} ${MultiHashing} ${MultiHashing_OS} ${XMRIG_ASM_SOURCES} ${CN_GPU_SOURCES})
 add_library(Http ${Http})
 add_library(InProcessNode ${InProcessNode})
 add_library(Logging ${Logging})
@@ -298,7 +316,7 @@ target_link_libraries(P2P CryptoNoteCore Logging ${Boost_LIBRARIES} upnpc-static
 target_link_libraries(Rpc CryptoNoteCore Logging P2P)
 
 target_link_libraries(ConnectivityTool CryptoNoteCore Common Logging Crypto P2P Rpc Http Serialization System ${Boost_LIBRARIES})
-target_link_libraries(Daemon P2P Rpc Serialization System Http Logging CryptoNoteCore Crypto Common upnpc-static rocksdb ${Boost_LIBRARIES} )
+target_link_libraries(Daemon P2P Rpc Serialization System Http Logging CryptoNoteCore Crypto Common upnpc-static rocksdb ${Boost_LIBRARIES} ${XMRIG_ASM_LIBRARY} )
 target_link_libraries(SimpleWallet Wallet NodeRpcProxy Transfers Rpc P2P upnpc-static Http Serialization CryptoNoteCore System Logging Common Crypto ${Boost_LIBRARIES})
 target_link_libraries(PaymentGateService PaymentGate JsonRpcServer Wallet NodeRpcProxy Transfers P2P CryptoNoteCore Crypto Rpc Http Serialization System Logging Common InProcessNode upnpc-static BlockchainExplorer rocksdb ${Boost_LIBRARIES})
 target_link_libraries(Miner CryptoNoteCore Rpc Serialization System Http Logging Common Crypto ${Boost_LIBRARIES})

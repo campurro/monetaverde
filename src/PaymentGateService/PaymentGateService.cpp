@@ -70,8 +70,8 @@ PaymentGateService::PaymentGateService() :
   stopEvent(nullptr),
   config(),
   service(nullptr),
-  logger(),
   currencyBuilder(logger),
+  logger(),
   fileLogger(Logging::TRACE),
   consoleLogger(Logging::INFO) {
   consoleLogger.setPattern("%D %T %L ");

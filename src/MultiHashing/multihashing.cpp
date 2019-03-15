@@ -1,4 +1,36 @@
-#include "multihashing.h"
+#include <stdint.h>
+#include <sys/mman.h>
+
+//#if (defined(__AES__) && (__AES__ == 1)) || defined(__APPLE__) || defined(__ARM_ARCH)
+//#else
+//#define _mm_aeskeygenassist_si128(a, b) a
+//#define _mm_aesenc_si128(a, b) a
+//#endif
+
+#if defined(__ARM_ARCH)
+#include "xmrig/crypto/CryptoNight_arm.h"
+#else
+#include "xmrig/extra.h"
+#include "xmrig/crypto/CryptoNight_x86.h"
+#endif
+
+#include "xmrig/Mem.h"
+#include "CryptoTypes.h"
+
+#if (defined(__AES__) && (__AES__ == 1)) || (defined(__ARM_FEATURE_CRYPTO) && (__ARM_FEATURE_CRYPTO == 1))
+#define SOFT_AES false
+#else
+#warning Using software AES
+#define SOFT_AES true
+#endif
+
+static struct cryptonight_ctx* ctx = NULL;
+
+void init_ctx() {
+    if (ctx) return;
+    Mem::create(&ctx, xmrig::CRYPTONIGHT_HEAVY, 1);
+}
+
 
 void cn_slow_hash_multihash (const void *data, size_t length, void *hash, int variant, int height)
 {
@@ -45,8 +77,8 @@ void cn_slow_hash_multihash (const void *data, size_t length, void *hash, int va
                 cryptonight_single_hash    <xmrig::CRYPTONIGHT, SOFT_AES, xmrig::VARIANT_HALF>             (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
 #endif
 		break;
-       //case 11: cryptonight_single_hash_gpu<xmrig::CRYPTONIGHT, SOFT_AES, xmrig::VARIANT_GPU>(reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
-       //         break;
+       case 11: cryptonight_single_hash_gpu<xmrig::CRYPTONIGHT, SOFT_AES, xmrig::VARIANT_GPU>(reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
+                break;
        //case 12:
                 //if (!height_set) return THROW_ERROR_EXCEPTION("CryptonightR requires block template height as Argument 3");
         //        cryptonight_single_hash    <xmrig::CRYPTONIGHT, SOFT_AES, xmrig::VARIANT_WOW>         (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);

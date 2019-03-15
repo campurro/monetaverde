@@ -1,46 +1,22 @@
-#include <stdint.h>
-#include <sys/mman.h>
+#ifndef CRYPTONIGHT_MULTIHASHING
+#define CRYPTONIGHT_MULTIHASHING
 
-//#if (defined(__AES__) && (__AES__ == 1)) || defined(__APPLE__) || defined(__ARM_ARCH)
-//#else
-//#define _mm_aeskeygenassist_si128(a, b) a
-//#define _mm_aesenc_si128(a, b) a
-//#endif
 
-#if defined(__ARM_ARCH)
-#include "xmrig/crypto/CryptoNight_arm.h"
-#else
-#include "xmrig/extra.h"
-#include "xmrig/crypto/CryptoNight_x86.h"
-#endif
 
-#include "xmrig/Mem.h"
-#include "CryptoTypes.h"
-
-#if (defined(__AES__) && (__AES__ == 1)) || (defined(__ARM_FEATURE_CRYPTO) && (__ARM_FEATURE_CRYPTO == 1))
-#define SOFT_AES false
-#else
-#warning Using software AES
-#define SOFT_AES true
-#endif
-
-static struct cryptonight_ctx* ctx = NULL;
-
-void init_ctx() {
-    if (ctx) return;
-    Mem::create(&ctx, xmrig::CRYPTONIGHT_HEAVY, 1);
-}
-
-void callback(char* data, void* hint) {
-    free(data);
-}
-
+void init_ctx ();
 void cn_slow_hash_multihash (const void *data, size_t length, void *hash, int variant, int height);
 inline void cn_slow_hash_multi (const void *data, size_t length, Crypto::Hash &hash, int variant, int height){
     cn_slow_hash_multihash(data, length, reinterpret_cast<void *>(&hash), 0, 0);
 }
 
+#endif
+
 /*
+void callback(char* data, void* hint); {
+    free(data);
+}
+
+
 NAN_METHOD(cryptonight) {
     if (info.Length() < 1) return THROW_ERROR_EXCEPTION("You must provide one argument.");
 

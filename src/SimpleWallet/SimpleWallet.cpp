@@ -120,7 +120,7 @@ class ArgumentReader {
 public:
 
   ArgumentReader(IterT begin, IterT end) :
-    m_begin(begin), m_end(end), m_cur(begin) {
+   m_cur(begin), m_begin(begin), m_end(end) {
   }
 
   bool eof() const {
@@ -468,13 +468,14 @@ bool simple_wallet::exit(const std::vector<std::string> &args) {
 }
 
 simple_wallet::simple_wallet(System::Dispatcher& dispatcher, const CryptoNote::Currency& currency, Logging::LoggerManager& log) :
-  m_dispatcher(dispatcher),
+  
   m_daemon_port(0), 
+  m_initResultPromise(nullptr),
   m_currency(currency), 
   logManager(log),
+  m_dispatcher(dispatcher),
   logger(log, "simplewallet"),
-  m_refresh_progress_reporter(*this), 
-  m_initResultPromise(nullptr),
+  m_refresh_progress_reporter(*this),
   m_walletSynchronized(false) {
   //m_consoleHandler.setHandler("start_mining", boost::bind(&simple_wallet::start_mining, this, _1), "start_mining [<number_of_threads>] - Start mining in daemon");
   //m_consoleHandler.setHandler("stop_mining", boost::bind(&simple_wallet::stop_mining, this, _1), "Stop mining in daemon");
