@@ -100,7 +100,7 @@ const char     MINER_CONFIG_FILE_NAME[]                      = "miner_conf.json"
 // testnet setup
 const uint32_t TESTNET_UPGRADE_HEIGHT_V2                             = 2;
 const uint32_t TESTNET_UPGRADE_HEIGHT_V3                             = 5;
-const uint32_t TESTNET_UPGRADE_HEIGHT_V4                             = 10;
+const uint32_t TESTNET_UPGRADE_HEIGHT_V4                             = 10000;
 const uint64_t TESTNET_DIFFICULTY_TARGET                             = 15; // target in testnet mode
 
 } // parameters

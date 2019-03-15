@@ -79,10 +79,10 @@ void cn_slow_hash_multihash (const void *data, size_t length, void *hash, int va
 		break;
        case 11: cryptonight_single_hash_gpu<xmrig::CRYPTONIGHT, SOFT_AES, xmrig::VARIANT_GPU>(reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
                 break;
-       //case 12:
+       case 12:
                 //if (!height_set) return THROW_ERROR_EXCEPTION("CryptonightR requires block template height as Argument 3");
-        //        cryptonight_single_hash    <xmrig::CRYPTONIGHT, SOFT_AES, xmrig::VARIANT_WOW>         (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
-        //        break;
+                cryptonight_single_hash    <xmrig::CRYPTONIGHT, SOFT_AES, xmrig::VARIANT_WOW>         (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
+                break;
        case 13:
                 // if (!height_set) return THROW_ERROR_EXCEPTION("Cryptonight4 requires block template height as Argument 3");
 
@@ -133,6 +133,16 @@ void cn_slow_hash_multihash (const void *data, size_t length, void *hash, int va
                 cryptonight_single_hash    <xmrig::CRYPTONIGHT, SOFT_AES, xmrig::VARIANT_DOUBLE>             (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
 #endif
 		break;
+
+
+        ///////////////////////////////////////////////////////
+        /// CRYPTONIGHT LITE
+        ///////////////////////////////////////////////////////
+        case 50:  cryptonight_single_hash<xmrig::CRYPTONIGHT_LITE, SOFT_AES, xmrig::VARIANT_0>  (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
+                break;
+        case 51:  cryptonight_single_hash<xmrig::CRYPTONIGHT_LITE, SOFT_AES, xmrig::VARIANT_1>  (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
+                break;
+        
 
         default:   
             cryptonight_single_hash<xmrig::CRYPTONIGHT, SOFT_AES, xmrig::VARIANT_0>  (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);

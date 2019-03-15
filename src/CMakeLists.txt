@@ -118,7 +118,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES GNU)
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Ofast")
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-    #-Wno-class-memaccess
+    #-Wno-class-memaccess => Throws an error in Linux
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast -s")
 
     if (XMRIG_ARMv8)

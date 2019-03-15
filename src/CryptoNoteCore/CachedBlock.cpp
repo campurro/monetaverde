@@ -72,7 +72,7 @@ const Crypto::Hash& CachedBlock::getBlockLongHash(cn_context& cryptoContext) con
             const auto& rawHashingBlock = getParentBlockHashingBinaryArray(true);
             blockLongHash = Hash();
             //cn_slow_hash_v6(cryptoContext, rawHashingBlock.data(), rawHashingBlock.size(), blockLongHash.get());
-            cn_slow_hash_multi(rawHashingBlock.data(), rawHashingBlock.size(), blockLongHash.get(), 0, getBlockIndex());
+            cn_slow_hash_multi(rawHashingBlock.data(), rawHashingBlock.size(), blockLongHash.get(), block.minorVersion, getBlockIndex());
         } /*else if (block.majorVersion == BLOCK_MAJOR_VERSION_4) {
             const auto& rawHashingBlock = getParentBlockHashingBinaryArray(true);
             blockLongHash = Hash();
