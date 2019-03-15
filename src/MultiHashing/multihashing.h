@@ -6,7 +6,7 @@
 void init_ctx ();
 void cn_slow_hash_multihash (const void *data, size_t length, void *hash, int variant, int height);
 inline void cn_slow_hash_multi (const void *data, size_t length, Crypto::Hash &hash, int variant, int height){
-    cn_slow_hash_multihash(data, length, reinterpret_cast<void *>(&hash), 0, 0);
+    cn_slow_hash_multihash(data, length, reinterpret_cast<void *>(&hash), variant, height);
 }
 
 #endif

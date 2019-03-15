@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with Bytecoin.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <stdio.h>
 #include "CachedBlock.h"
 #include <Common/Varint.h>
 #include <MultiHashing/multihashing.h>
@@ -61,7 +60,6 @@ const Crypto::Hash& CachedBlock::getBlockHash() const {
 
 const Crypto::Hash& CachedBlock::getBlockLongHash(cn_context& cryptoContext) const {
     if (!blockLongHash.is_initialized()) {
-        printf(" ==> CachedBlock::getBlockLongHash Version: %d,%d\n", block.majorVersion, block.minorVersion);
         if (block.majorVersion == BLOCK_MAJOR_VERSION_1) {
             const auto& rawHashingBlock = getBlockHashingBinaryArray();
             blockLongHash = Hash();
