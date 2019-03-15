@@ -663,9 +663,7 @@ std::error_code Core::addBlock(const CachedBlock& cachedBlock, RawBlock&& rawBlo
 
         ret = error::AddBlockErrorCode::ADDED_TO_MAIN;
 
-        BlockDetails bd = getBlockDetails(cachedBlock.getBlockHash());
-
-        logger(Logging::DEBUGGING) << "Block " << cachedBlock.getBlockHash() << " added to main chain. Index: " << (previousBlockIndex + 1) << ' ' << bd.majorVersion << '.' << bd.minorVersion;
+        logger(Logging::DEBUGGING) << "Block " << cachedBlock.getBlockHash() << " added to main chain. Index: " << (previousBlockIndex + 1);
         if ((previousBlockIndex + 1) % 100 == 0) {
           logger(Logging::INFO) << "Block " << cachedBlock.getBlockHash() << " added to main chain. Index: " << (previousBlockIndex + 1);
         }
@@ -853,6 +851,7 @@ std::error_code Core::submitBlock(BinaryArray&& rawBlockTemplate) {
 
     rawBlock.transactions.emplace_back(transactionPool->getTransaction(transactionHash).getTransactionBinaryArray());
   }
+  logger(Logging::WARNING) << 'BlockVERSION: ' << blockTemplate.majorVersion << '.' << blockTemplate.minorVersion;
 
   CachedBlock cachedBlock(blockTemplate);
   return addBlock(cachedBlock, std::move(rawBlock));
