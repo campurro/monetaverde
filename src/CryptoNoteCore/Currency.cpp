@@ -543,9 +543,10 @@ Difficulty Currency::nextDifficulty(
     Difficulty nextDiff;
     if (version >= BLOCK_MAJOR_VERSION_4) {
         nextDiff = nextDifficultyV4(version,timestamps,cumulativeDifficulties);
-    } else if (version == BLOCK_MAJOR_VERSION_3) {
-        nextDiff = nextDifficultyV3(version,timestamps,cumulativeDifficulties);
-    } else if (version == BLOCK_MAJOR_VERSION_2) {
+    // } else if (version == BLOCK_MAJOR_VERSION_3) {
+    //    nextDiff = nextDifficultyV3(version,timestamps,cumulativeDifficulties);
+    //} else if (version == BLOCK_MAJOR_VERSION_2) {
+    } else if (version <= BLOCK_MAJOR_VERSION_3) {
         nextDiff =  nextDifficultyV2(version,timestamps,cumulativeDifficulties);
     } else {
         nextDiff = nextDifficultyV1(version,timestamps,cumulativeDifficulties);
