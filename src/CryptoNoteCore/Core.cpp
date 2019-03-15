@@ -547,7 +547,7 @@ std::vector<Crypto::Hash> Core::findBlockchainSupplement(const std::vector<Crypt
 
 std::error_code Core::addBlock(const CachedBlock& cachedBlock, RawBlock&& rawBlock) {
   throwIfNotInitialized();
-  logger(Logging::DEBUGGING) << "Request to add block came for block " << cachedBlock.getBlockHash();
+  logger(Logging::DEBUGGING) << "Request to add block came for block " << cachedBlock.getBlockHash() << ' ' << rawBlock.majorVersion << '.' << rawBlock.minorVersion;
 
   if (hasBlock(cachedBlock.getBlockHash())) {
     logger(Logging::DEBUGGING) << "Block " << cachedBlock.getBlockHash() << " already exists";
@@ -639,7 +639,7 @@ std::error_code Core::addBlock(const CachedBlock& cachedBlock, RawBlock&& rawBlo
       logger(Logging::WARNING) << "Checkpoint block hash mismatch for block " << cachedBlock.getBlockHash();
       return error::BlockValidationError::CHECKPOINT_BLOCK_HASH_MISMATCH;
     }
-} else if (!currency.checkProofOfWork(cryptoContext, cachedBlock, currentDifficulty)) {
+  } else if (!currency.checkProofOfWork(cryptoContext, cachedBlock, currentDifficulty)) {
     logger(Logging::WARNING) << "Proof of work too weak for block " << cachedBlock.getBlockHash()
 			     << " Diff: " << currentDifficulty;
     return error::BlockValidationError::PROOF_OF_WORK_TOO_WEAK;
