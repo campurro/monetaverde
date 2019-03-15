@@ -265,7 +265,7 @@ bool Currency::getBlockReward(uint8_t blockMajorVersion, size_t medianSize, size
 	}
 
 	uint64_t penalizedBaseReward = getPenalizedAmount(baseReward, medianSize, currentBlockSize);
-	uint64_t penalizedFee = blockMajorVersion >= BLOCK_MAJOR_VERSION_3 ? getPenalizedAmount(fee, medianSize, currentBlockSize) : fee;
+	uint64_t penalizedFee = blockMajorVersion >= BLOCK_MAJOR_VERSION_4 ? getPenalizedAmount(fee, medianSize, currentBlockSize) : fee;
 	if (parameters::CRYPTONOTE_COIN_VERSION == 1) {
 		penalizedFee = getPenalizedAmount(fee, medianSize, currentBlockSize);
 	}
