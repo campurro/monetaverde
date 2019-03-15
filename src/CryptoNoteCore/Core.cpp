@@ -547,7 +547,7 @@ std::vector<Crypto::Hash> Core::findBlockchainSupplement(const std::vector<Crypt
 
 std::error_code Core::addBlock(const CachedBlock& cachedBlock, RawBlock&& rawBlock) {
   throwIfNotInitialized();
-  logger(Logging::DEBUGGING) << "Request to add block came for block " << cachedBlock.getBlockHash() << ' ' << rawBlock.majorVersion << '.' << rawBlock.minorVersion;
+  logger(Logging::DEBUGGING) << "Request to add block came for block " << cachedBlock.getBlockHash() << ' ' << cachedBlock.getBlock().majorVersion << '.' << cachedBlock.getBlock().minorVersion;
 
   if (hasBlock(cachedBlock.getBlockHash())) {
     logger(Logging::DEBUGGING) << "Block " << cachedBlock.getBlockHash() << " already exists";
