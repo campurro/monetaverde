@@ -36,7 +36,6 @@ void init_ctx() {
 void cn_slow_hash_multihash (const void *data, size_t length, void *hash, int variant, int height)
 {
     init_ctx();
-    printf(" ==> cn_slow_hash_multihash Variant: %d, height: %d\n", variant, height);
     switch (variant) {
        case 0:  cryptonight_single_hash<xmrig::CRYPTONIGHT, SOFT_AES, xmrig::VARIANT_0>  (reinterpret_cast<const uint8_t*>(data), length, reinterpret_cast<uint8_t*>(hash), &ctx, height);
                 break;

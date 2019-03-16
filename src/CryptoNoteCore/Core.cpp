@@ -851,7 +851,7 @@ std::error_code Core::submitBlock(BinaryArray&& rawBlockTemplate) {
 
     rawBlock.transactions.emplace_back(transactionPool->getTransaction(transactionHash).getTransactionBinaryArray());
   }
-  logger(Logging::WARNING) << "BlockVERSION: " << (int)blockTemplate.majorVersion << "." << (int)blockTemplate.minorVersion;
+  logger(Logging::DEBUGGING) << "BlockVERSION: " << (int)blockTemplate.majorVersion << "." << (int)blockTemplate.minorVersion;
 
   CachedBlock cachedBlock(blockTemplate);
   return addBlock(cachedBlock, std::move(rawBlock));
