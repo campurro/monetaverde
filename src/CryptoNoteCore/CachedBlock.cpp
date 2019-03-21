@@ -190,6 +190,8 @@ uint32_t CachedBlock::getParentBlockIndex() const {
     } else {
       bindex = boost::get<BaseInput>(in).blockIndex;
     }
+  } else {
+    bindex = getBlockIndex(); // No merged mining (no parent block data)
   }
   return bindex;
 }
