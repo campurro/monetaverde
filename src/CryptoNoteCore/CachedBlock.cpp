@@ -20,6 +20,7 @@
 #include <MultiHashing/multihashing.h>
 #include "CryptoNoteConfig.h"
 #include "CryptoNoteTools.h"
+#include "CryptoNoteFormatUtils.h"
 
 using namespace Crypto;
 using namespace CryptoNote;
@@ -72,7 +73,7 @@ const Crypto::Hash& CachedBlock::getBlockLongHash(cn_context& cryptoContext) con
             const auto& rawHashingBlock = getParentBlockHashingBinaryArray(true);
             blockLongHash = Hash();
             //cn_slow_hash_v6(cryptoContext, rawHashingBlock.data(), rawHashingBlock.size(), blockLongHash.get());
-            cn_slow_hash_multi(rawHashingBlock.data(), rawHashingBlock.size(), blockLongHash.get(), block.minorVersion, getBlockIndex());
+            cn_slow_hash_multi(rawHashingBlock.data(), rawHashingBlock.size(), blockLongHash.get(), block.minorVersion, getParentBlockHeight(block));
         } /*else if (block.majorVersion == BLOCK_MAJOR_VERSION_4) {
             const auto& rawHashingBlock = getParentBlockHashingBinaryArray(true);
             blockLongHash = Hash();

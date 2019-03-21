@@ -281,6 +281,13 @@ bool getInputsMoneyAmount(const Transaction& tx, uint64_t& money) {
   return true;
 }
 
+uint64_t getParentBlockHeight(const BlockTemplate& b) {
+  //CHECK_AND_ASSERT_MES(b.parentBlock.baseTransaction.inputs.size() == 1, false, "coinbase transaction in the parent block has no inputs");
+  assert(b.parentBlock.baseTransaction.inputs.size() == 1);
+  return boost::get<BaseInput>(b.parentBlock.baseTransaction.inputs[0]).blockIndex;
+}
+
+
 bool checkInputTypesSupported(const TransactionPrefix& tx) {
   for (const auto& in : tx.inputs) {
     if (in.type() != typeid(KeyInput) && in.type() != typeid(MultisignatureInput)) {
