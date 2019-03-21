@@ -40,6 +40,7 @@ public:
   const BinaryArray& getParentBlockBinaryArray(bool headerOnly) const;
   const BinaryArray& getParentBlockHashingBinaryArray(bool headerOnly) const;
   uint32_t getBlockIndex() const;
+  uint32_t getParentBlockIndex() const;
 
 private:
   const BlockTemplate& block;

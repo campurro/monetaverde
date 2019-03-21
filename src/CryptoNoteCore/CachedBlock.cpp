@@ -20,7 +20,6 @@
 #include <MultiHashing/multihashing.h>
 #include "CryptoNoteConfig.h"
 #include "CryptoNoteTools.h"
-#include "CryptoNoteFormatUtils.h"
 
 using namespace Crypto;
 using namespace CryptoNote;
@@ -73,7 +72,7 @@ const Crypto::Hash& CachedBlock::getBlockLongHash(cn_context& cryptoContext) con
             const auto& rawHashingBlock = getParentBlockHashingBinaryArray(true);
             blockLongHash = Hash();
             //cn_slow_hash_v6(cryptoContext, rawHashingBlock.data(), rawHashingBlock.size(), blockLongHash.get());
-            cn_slow_hash_multi(rawHashingBlock.data(), rawHashingBlock.size(), blockLongHash.get(), block.minorVersion, getParentBlockHeight(block));
+            cn_slow_hash_multi(rawHashingBlock.data(), rawHashingBlock.size(), blockLongHash.get(), block.minorVersion, getParentBlockIndex());
         } /*else if (block.majorVersion == BLOCK_MAJOR_VERSION_4) {
             const auto& rawHashingBlock = getParentBlockHashingBinaryArray(true);
             blockLongHash = Hash();
@@ -178,4 +177,19 @@ uint32_t CachedBlock::getBlockIndex() const {
   }
 
   return blockIndex.get();
+}
+
+
+uint32_t CachedBlock::getParentBlockIndex() const {
+  //CHECK_AND_ASSERT_MES(b.parentBlock.baseTransaction.inputs.size() == 1, false, "coinbase transaction in the parent block has no inputs");
+  uint32_t bindex = 0;
+  if (block.parentBlock.baseTransaction.inputs.size() == 1) {
+    const auto& in = block.parentBlock.baseTransaction.inputs[0];
+    if (in.type() != typeid(BaseInput)) {
+        bindex = 0;
+    } else {
+      bindex = boost::get<BaseInput>(in).blockIndex;
+    }
+  }
+  return bindex;
 }

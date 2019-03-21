@@ -68,7 +68,6 @@ bool get_tx_fee(const Transaction& tx, uint64_t & fee);
 uint64_t get_tx_fee(const Transaction& tx);
 bool generate_key_image_helper(const AccountKeys& ack, const Crypto::PublicKey& tx_public_key, size_t real_output_index, KeyPair& in_ephemeral, Crypto::KeyImage& ki);
 bool getInputsMoneyAmount(const Transaction& tx, uint64_t& money);
-uint64_t getParentBlockHeight(const BlockTemplate& b);
 bool checkInputTypesSupported(const TransactionPrefix& tx);
 bool checkOutsValid(const TransactionPrefix& tx, std::string* error = nullptr);
 bool checkMultisignatureInputsDiff(const TransactionPrefix& tx);
