@@ -143,11 +143,9 @@ const size_t   P2P_DEFAULT_HANDSHAKE_INVOKE_TIMEOUT          = 5000;          //
 const char     P2P_STAT_TRUSTED_PUB_KEY[]                    = "db9eabe971890012a4071a96468155c2c360f80d18e73caa97bffd3b7381eed7";
 
 const char* const SEED_NODES[] = {
-  "176.9.47.243:8580",
-  "66.85.133.156:26080",
-  "35.227.28.16:26080",
   "145.239.5.182:26080", // london
-  "144.217.84.27:26080", // canada
+  "144.217.242.127:26080", // canada
+  "144.217.84.27:26080", // canada2
   "173.212.213.63:26080" // oieieio's
 };
 
@@ -164,7 +162,9 @@ const std::initializer_list<CheckpointData> CHECKPOINTS = {
     {800000, "a1ed05e9671acce3cfa7dd283f0be5320b8d626fe84be4703fc8d3be95ffcc59"},
     {1000000, "d410152f30e4c21e0bc1d82ee80f757fd2223e8a1636774b8759101f4f21dd91"},
     {1500000, "23e3e5273df28de9036b7336894578873257e1b1a2d2d14ab9945b7333ce8707"},
-    {2000000, "2d5892e15d7b2066d0b26aa150c4419676dbf7678d220b2d111c74c54c0fe6ad"}
+    {2000000, "2d5892e15d7b2066d0b26aa150c4419676dbf7678d220b2d111c74c54c0fe6ad"},
+    {2200000, "1a57463ba91b8a2b7dd19acbbfcc54f405d9aa3ae29dbd1c12ea486eea9a9f23"},
+    {2400000, "1db3c24ea800eda2abb590974b2463a7c0ffc08bfdb688879b8a01f6208f5701"} 
 };
 
 } // CryptoNote
