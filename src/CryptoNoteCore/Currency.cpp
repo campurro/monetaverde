@@ -67,12 +67,11 @@ namespace CryptoNote {
 
 #endif
 
-
-    const size_t log_fix_precision = 20; // Monetaverde
-	static_assert(1 <= log_fix_precision && log_fix_precision < sizeof(uint64_t) * 8 / 2 - 1, "Invalid log precision");
-	uint64_t log2_fix(uint64_t x)
+	
+	uint64_t log2_fix(uint64_t x, size_t log_fix_precision)
     {
       assert(x != 0);
+      assert(1 <= log_fix_precision && log_fix_precision < sizeof(uint64_t) * 8 / 2 - 1); // "Invalid log precision"
 
       uint64_t b = UINT64_C(1) << (log_fix_precision - 1);
       uint64_t y = 0;
@@ -241,9 +240,11 @@ uint32_t Currency::upgradeHeight(uint8_t majorVersion) const {
 bool Currency::getBlockReward(uint8_t blockMajorVersion, size_t medianSize, size_t currentBlockSize, uint64_t alreadyGeneratedCoins,
 	uint64_t fee, uint64_t& reward, int64_t& emissionChange, const Difficulty diff) const {
 
+    size_t log_fix_precision = blockMajorVersion > BLOCK_MAJOR_VERSION_2? parameters::BLOCK_REWARD_LOG_FIX_PRECISION_V3:parameters::BLOCK_REWARD_LOG_FIX_PRECISION;
+
    assert(diff != 0);
    assert(static_cast<uint64_t>(diff) < (UINT64_C(1) << (sizeof(uint64_t) * 8 - log_fix_precision)));
-   uint64_t baseReward = log2_fix(diff << log_fix_precision) << 20;
+   uint64_t baseReward = log2_fix(diff << log_fix_precision, log_fix_precision) << 20;
    // std::cout << "baseReward: " << baseReward << ", con diff " << std::endl;
 
 	// assert(alreadyGeneratedCoins <= m_moneySupply);
@@ -546,7 +547,7 @@ Difficulty Currency::nextDifficulty(
     // } else if (version == BLOCK_MAJOR_VERSION_3) {
     //    nextDiff = nextDifficultyV3(version,timestamps,cumulativeDifficulties);
     //} else if (version == BLOCK_MAJOR_VERSION_2) {
-    } else if (version <= BLOCK_MAJOR_VERSION_3) {
+    } else if (version == BLOCK_MAJOR_VERSION_2 || version == BLOCK_MAJOR_VERSION_3) {
         nextDiff =  nextDifficultyV2(version,timestamps,cumulativeDifficulties);
     } else {
         nextDiff = nextDifficultyV1(version,timestamps,cumulativeDifficulties);
@@ -656,7 +657,7 @@ Difficulty Currency::nextDifficultyV3(
     return low/weightedSolveTimes;
 }
 
-// First Zawy's LWMA difficulty algorithm implementation at block 69500
+// First Zawy's LWMA difficulty algorithm implementation
 // ( 59 solvetimes intead of 60 - adjust = 0.9912338056 - potential exploit due to uint solvetimes)
 Difficulty Currency::nextDifficultyV2(
         uint8_t &version,
