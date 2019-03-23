@@ -664,7 +664,7 @@ Difficulty Currency::nextDifficultyV2(
         std::vector<Difficulty> cumulativeDifficulties
         ) const {
 
-    uint64_t target_seconds = CryptoNote::parameters::DIFFICULTY_TARGET;
+    uint64_t target_seconds = static_cast<int64_t>(m_difficultyTarget); //CryptoNote::parameters::DIFFICULTY_TARGET;
 	size_t m_difficultyWindow_2 = CryptoNote::parameters::DIFFICULTY_WINDOW_V2;
 	assert(m_difficultyWindow_2 >= 2);
 
