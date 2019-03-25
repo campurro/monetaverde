@@ -41,7 +41,7 @@ public:
   uint32_t minedMoneyUnlockWindow() const { return m_minedMoneyUnlockWindow; }
 
   size_t timestampCheckWindow() const { return m_timestampCheckWindow; }
-  size_t timestampCheckWindowV4() const { return m_timestampCheckWindowV4; }
+  size_t timestampCheckWindowV3() const { return m_timestampCheckWindowV3; }
   uint64_t blockFutureTimeLimit() const { return m_blockFutureTimeLimit; }
 
   uint64_t moneySupply() const { return m_moneySupply; }
@@ -157,7 +157,7 @@ private:
   uint32_t m_minedMoneyUnlockWindow;
 
   size_t m_timestampCheckWindow;
-  size_t m_timestampCheckWindowV4;
+  size_t m_timestampCheckWindowV3;
   uint64_t m_blockFutureTimeLimit;
 
   uint64_t m_moneySupply;
@@ -249,7 +249,7 @@ public:
   CurrencyBuilder& minedMoneyUnlockWindow(uint32_t val) { m_currency.m_minedMoneyUnlockWindow = val; return *this; }
 
   CurrencyBuilder& timestampCheckWindow(size_t val) { m_currency.m_timestampCheckWindow = val; return *this; }
-  CurrencyBuilder& timestampCheckWindowV4(size_t val) { m_currency.m_timestampCheckWindowV4 = val; return *this; }
+  CurrencyBuilder& timestampCheckWindowV3(size_t val) { m_currency.m_timestampCheckWindowV3 = val; return *this; }
   CurrencyBuilder& blockFutureTimeLimit(uint64_t val) { m_currency.m_blockFutureTimeLimit = val; return *this; }
 
   CurrencyBuilder& moneySupply(uint64_t val) { m_currency.m_moneySupply = val; return *this; }

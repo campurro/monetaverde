@@ -32,7 +32,7 @@ const uint32_t CRYPTONOTE_MINED_MONEY_UNLOCK_WINDOW          = 60;
 const uint64_t CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT            = 60 * 60 * 2; // 525; // T*N/20
 
 const size_t   BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW             = 60;
-const size_t   BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW_V4          = 11;
+const size_t   BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW_V3          = 60;
 
 // MONEY_SUPPLY - total number coins to be generated
 const uint64_t MONEY_SUPPLY                                  = static_cast<uint64_t>(-1);

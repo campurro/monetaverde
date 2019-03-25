@@ -853,7 +853,7 @@ Currency::Currency(Currency&& currency) :
     m_publicAddressBase58Prefix(currency.m_publicAddressBase58Prefix),
     m_minedMoneyUnlockWindow(currency.m_minedMoneyUnlockWindow),
     m_timestampCheckWindow(currency.m_timestampCheckWindow),
-    m_timestampCheckWindowV4(currency.m_timestampCheckWindowV4),
+    m_timestampCheckWindowV3(currency.m_timestampCheckWindowV3),
     m_blockFutureTimeLimit(currency.m_blockFutureTimeLimit),
     m_moneySupply(currency.m_moneySupply),
     m_emissionSpeedFactor(currency.m_emissionSpeedFactor),
@@ -910,7 +910,7 @@ CurrencyBuilder::CurrencyBuilder(Logging::ILogger& log) : m_currency(log) {
     minedMoneyUnlockWindow(parameters::CRYPTONOTE_MINED_MONEY_UNLOCK_WINDOW);
 
     timestampCheckWindow(parameters::BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW);
-    timestampCheckWindowV4(parameters::BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW_V4);
+    timestampCheckWindowV3(parameters::BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW_V3);
     blockFutureTimeLimit(parameters::CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT);
 
     moneySupply(parameters::MONEY_SUPPLY);

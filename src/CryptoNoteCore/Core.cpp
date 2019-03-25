@@ -1079,9 +1079,9 @@ bool Core::getBlockTemplate(BlockTemplate& b, const AccountPublicAddress& adr, c
   // Thanks Jagerman for this
   // adapted from monero code by stevebrush for bytecoin 2 code
 
-  if(height >= currency.timestampCheckWindowV4()) {
+  if(b.majorVersion >= BLOCK_MAJOR_VERSION_3 && height >= currency.timestampCheckWindowV3()) {
       std::vector<uint64_t> timestamps;
-      for(size_t offset = height - currency.timestampCheckWindowV4(); offset < height; ++offset){
+      for(size_t offset = height - currency.timestampCheckWindowV3(); offset < height; ++offset){
           timestamps.push_back(getBlockTimestampByIndex(offset));
       }
       uint64_t median_ts = Common::medianValue(timestamps);
