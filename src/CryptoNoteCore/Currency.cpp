@@ -661,6 +661,7 @@ Difficulty Currency::nextDifficultyLWMA(uint8_t &version,
 // LWMA-1 difficulty algorithm
 // Copyright (c) 2017-2018 Zawy, MIT License
 // https://github.com/zawy12/difficulty-algorithms/issues/3
+/*
 Difficulty
 Currency::nextDifficultyLWMA_untested(std::vector<uint64_t> &timestamps,
                            std::vector<uint64_t> &cumulative_difficulties,
@@ -765,7 +766,7 @@ Currency::nextDifficultyLWMA_untested(std::vector<uint64_t> &timestamps,
 
   return next_D;
 }
-
+*/
 
 bool Currency::checkProofOfWorkV1(Crypto::cn_context& context, const CachedBlock& block, Difficulty currentDifficulty) const {
     if (BLOCK_MAJOR_VERSION_1 != block.getBlock().majorVersion) {
