@@ -242,7 +242,7 @@ uint32_t Currency::upgradeHeight(uint8_t majorVersion) const {
 bool Currency::getBlockReward(uint8_t blockMajorVersion, size_t medianSize, size_t currentBlockSize, uint64_t alreadyGeneratedCoins,
 	uint64_t fee, uint64_t& reward, int64_t& emissionChange, const Difficulty diff) const {
 
-    size_t log_fix_precision = blockMajorVersion > BLOCK_MAJOR_VERSION_2? parameters::BLOCK_REWARD_LOG_FIX_PRECISION_V3:parameters::BLOCK_REWARD_LOG_FIX_PRECISION;
+    size_t log_fix_precision = blockMajorVersion > BLOCK_MAJOR_VERSION_2? (parameters::BLOCK_REWARD_LOG_FIX_PRECISION_V3):(parameters::BLOCK_REWARD_LOG_FIX_PRECISION);
 
    assert(diff != 0);
    assert(static_cast<uint64_t>(diff) < (UINT64_C(1) << (sizeof(uint64_t) * 8 - log_fix_precision)));
@@ -628,7 +628,8 @@ Currency::nextDifficultyLWMA(std::vector<uint64_t> &timestamps,
 
   // Hard code D if there are not at least N+1 BLOCKS after fork (or genesis)
   if (height >= FORK_HEIGHT && height < (FORK_HEIGHT + N - 1)) {
-    return difficulty_guess;
+      return nextDifficultyOriginal(timestamps,cumulative_difficulties);
+    //return difficulty_guess;
   }
   assert(timestamps.size() == N);
 
