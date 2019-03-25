@@ -129,11 +129,9 @@ public:
 
   Difficulty nextDifficulty(uint8_t version, uint32_t blockIndex, std::vector<uint64_t> timestamps, std::vector<Difficulty> cumulativeDifficulties) const;
   Difficulty nextDifficultyOriginal(std::vector<uint64_t> timestamps, std::vector<Difficulty> cumulativeDifficulties) const;
-  Difficulty nextDifficultyLWMA(std::vector<uint64_t> &timestamps,
-                           std::vector<uint64_t> &cumulative_difficulties,
-                           const uint64_t &T, const uint64_t &N,
-                           const uint64_t &height, const uint64_t &FORK_HEIGHT,
-                           const uint64_t &difficulty_guess) const;
+  Difficulty nextDifficultyLWMA(uint8_t &version,
+        std::vector<uint64_t> &timestamps,
+        std::vector<Difficulty> &cumulativeDifficulties) const;
 
   bool checkProofOfWorkV1(Crypto::cn_context& context, const CachedBlock& block, Difficulty currentDifficulty) const;
   bool checkProofOfWorkV2(Crypto::cn_context& context, const CachedBlock& block, Difficulty currentDifficulty) const;

@@ -545,9 +545,10 @@ Difficulty Currency::nextDifficulty(
         ) const {
     Difficulty nextDiff;
     if (version >= BLOCK_MAJOR_VERSION_3) {
-        nextDiff =  nextDifficultyLWMA(timestamps, cumulativeDifficulties, m_difficultyTarget,
+        /*nextDiff =  nextDifficultyLWMA(timestamps, cumulativeDifficulties, m_difficultyTarget,
                          difficultyWindowByBlockVersion(version), blockIndex,
-                         m_upgradeHeightV3, m_difficultyGuess);
+                         m_upgradeHeightV3, m_difficultyGuess);*/
+        nextDiff = nextDifficultyLWMA(version, timestamps,cumulativeDifficulties);
     } else {
         nextDiff = nextDifficultyOriginal(timestamps,cumulativeDifficulties);
     }
@@ -608,11 +609,60 @@ Difficulty Currency::nextDifficultyOriginal(
     return (low + time_span - 1) / time_span;
 }
 
+
+// LWMA difficulty algorithm Hard fork v4
+// Copyright (c) 2017-2018 Zawy
+// MIT license http://www.opensource.org/licenses/mit-license.php.
+// Tom Harding, Karbowanec, Masari, Bitcoin Gold, and Bitcoin Candy have contributed.
+// https://github.com/zawy12/difficulty-algorithms/issues/3
+// Zawy's LWMA difficulty algorithm implementation V4 (60 solvetimes limits -7T/7T)
+// (60 solvetimes - limits -7T/7T - adjust = 0.9909)
+Difficulty Currency::nextDifficultyLWMA(uint8_t &version,
+        std::vector<uint64_t> &timestamps,
+        std::vector<Difficulty> &cumulativeDifficulties
+        ) const {
+    const size_t c_difficultyWindow = difficultyWindowByBlockVersion(version); // 61
+    const int64_t c_difficultyTarget = static_cast<int64_t>(m_difficultyTarget);
+    if (timestamps.size() > c_difficultyWindow) {
+        timestamps.resize(c_difficultyWindow);
+        cumulativeDifficulties.resize(c_difficultyWindow);
+    }
+    size_t length = timestamps.size();
+    assert(length == cumulativeDifficulties.size());
+    assert(length <= c_difficultyWindow);
+    if (length <= 1) {
+        return 1;
+    }
+    int64_t solveTime(0),LWMA(0),minWST(0);
+    uint64_t aimedTarget(0),low,high;
+    Difficulty totalWork(0),nextDiff(0);
+    const double_t adjust = 0.9909;
+    for (int64_t i = 1; i < length; i++) { // lenght = 61
+        solveTime = static_cast<int64_t>(timestamps[i]) - static_cast<int64_t>(timestamps[i-1]);
+        solveTime = std::max<int64_t>(- blockFutureTimeLimit(), solveTime);
+        LWMA += solveTime * i;
+    }
+    // Keep LWMA sane in case something unforeseen occurs.if ( LWMA < T*N*(N+1)/8 ) { LWMA = T*N*(N+1)/8; N=lenght-1}
+    minWST = c_difficultyTarget * length*(length-1)/8;
+    if(LWMA < minWST){
+        LWMA = minWST;
+    }
+    totalWork = cumulativeDifficulties.back() - cumulativeDifficulties.front();
+    aimedTarget = adjust * (length / 2.0) * c_difficultyTarget ;
+    assert(totalWork > 0);
+    low = mul128(totalWork, aimedTarget, &high);
+    if (high != 0) {
+        return 0;
+    }
+    nextDiff = low/LWMA;
+    return nextDiff;
+}
+
 // LWMA-1 difficulty algorithm
 // Copyright (c) 2017-2018 Zawy, MIT License
 // https://github.com/zawy12/difficulty-algorithms/issues/3
 Difficulty
-Currency::nextDifficultyLWMA(std::vector<uint64_t> &timestamps,
+Currency::nextDifficultyLWMA_untested(std::vector<uint64_t> &timestamps,
                            std::vector<uint64_t> &cumulative_difficulties,
                            const uint64_t &T, const uint64_t &N,
                            const uint64_t &height, const uint64_t &FORK_HEIGHT,
