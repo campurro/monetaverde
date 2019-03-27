@@ -212,7 +212,7 @@ size_t Currency::difficultyCutByBlockVersion(uint8_t blockMajorVersion) const {
 }
 
 size_t Currency::difficultyBlocksCountByBlockVersion(uint8_t blockMajorVersion) const {
-    if (blockMajorVersion == BLOCK_MAJOR_VERSION_2) {
+    if (blockMajorVersion >= BLOCK_MAJOR_VERSION_2) {
         return DIFFICULTY_BLOCKS_COUNT;
     } else {
         return difficultyWindowByBlockVersion(blockMajorVersion) + difficultyLagByBlockVersion(blockMajorVersion);
@@ -247,8 +247,7 @@ bool Currency::getBlockReward(uint8_t blockMajorVersion, size_t medianSize, size
    assert(diff != 0);
    assert(static_cast<uint64_t>(diff) < (UINT64_C(1) << (sizeof(uint64_t) * 8 - log_fix_precision)));
    uint64_t baseReward = log2_fix(diff << log_fix_precision, log_fix_precision) << 20;
-   // std::cout << "baseReward: " << baseReward << ", con diff " << std::endl;
-
+   // logger(Logging::INFO, Logging::BRIGHT_GREEN) << "baseReward: " << baseReward << ", con diff " << (int)diff << ", log fix: " << log_fix_precision << ", b.majorv: " << (int)blockMajorVersion;
 	// assert(alreadyGeneratedCoins <= m_moneySupply);
 	assert(m_emissionSpeedFactor > 0 && m_emissionSpeedFactor <= 8 * sizeof(uint64_t));
 
@@ -272,6 +271,7 @@ bool Currency::getBlockReward(uint8_t blockMajorVersion, size_t medianSize, size
 	if (parameters::CRYPTONOTE_COIN_VERSION == 1) {
 		penalizedFee = getPenalizedAmount(fee, medianSize, currentBlockSize);
 	}
+    // logger(Logging::INFO, Logging::BRIGHT_GREEN) << "[getBlockReward] baseReward: " << baseReward << ", con diff " << (int)diff << ", log fix: " << log_fix_precision << ", b.majorv: " << (int)blockMajorVersion << ", penalizedBaseReward: " << penalizedBaseReward << ", penalizedFee: " << penalizedFee << ", fee:" << fee;
 	//std::cout << "BlockSize: " << currentBlockSize  << ", medianSize:" << medianSize << ", baseReward: " << formatAmount(baseReward) << ", penalizedBaseReward: " << formatAmount(penalizedBaseReward) << ", fee: " << formatAmount(fee)
 	//			<< ", penalizedFee: " << formatAmount(penalizedFee) << std::endl;
 	emissionChange = penalizedBaseReward - (fee - penalizedFee);
@@ -545,10 +545,10 @@ Difficulty Currency::nextDifficulty(
         ) const {
     Difficulty nextDiff;
     if (version >= BLOCK_MAJOR_VERSION_3) {
-        /*nextDiff =  nextDifficultyLWMA(timestamps, cumulativeDifficulties, m_difficultyTarget,
+        nextDiff =  nextDifficultyLWMA(timestamps, cumulativeDifficulties, m_difficultyTarget,
                          difficultyWindowByBlockVersion(version), blockIndex,
-                         m_upgradeHeightV3, m_difficultyGuess);*/
-        nextDiff = nextDifficultyLWMA(version, timestamps,cumulativeDifficulties);
+                         m_upgradeHeightV3, m_difficultyGuess);
+        // nextDiff = nextDifficultyLWMA(version, timestamps,cumulativeDifficulties);
     } else {
         nextDiff = nextDifficultyOriginal(timestamps,cumulativeDifficulties);
     }
@@ -617,7 +617,7 @@ Difficulty Currency::nextDifficultyOriginal(
 // https://github.com/zawy12/difficulty-algorithms/issues/3
 // Zawy's LWMA difficulty algorithm implementation V4 (60 solvetimes limits -7T/7T)
 // (60 solvetimes - limits -7T/7T - adjust = 0.9909)
-Difficulty Currency::nextDifficultyLWMA(uint8_t &version,
+/*Difficulty Currency::nextDifficultyLWMA(uint8_t &version,
         std::vector<uint64_t> &timestamps,
         std::vector<Difficulty> &cumulativeDifficulties
         ) const {
@@ -656,14 +656,14 @@ Difficulty Currency::nextDifficultyLWMA(uint8_t &version,
     }
     nextDiff = low/LWMA;
     return nextDiff;
-}
+}*/
 
 // LWMA-1 difficulty algorithm
 // Copyright (c) 2017-2018 Zawy, MIT License
 // https://github.com/zawy12/difficulty-algorithms/issues/3
-/*
+
 Difficulty
-Currency::nextDifficultyLWMA_untested(std::vector<uint64_t> &timestamps,
+Currency::nextDifficultyLWMA(std::vector<uint64_t> &timestamps,
                            std::vector<uint64_t> &cumulative_difficulties,
                            const uint64_t &T, const uint64_t &N,
                            const uint64_t &height, const uint64_t &FORK_HEIGHT,
@@ -766,7 +766,7 @@ Currency::nextDifficultyLWMA_untested(std::vector<uint64_t> &timestamps,
 
   return next_D;
 }
-*/
+
 
 bool Currency::checkProofOfWorkV1(Crypto::cn_context& context, const CachedBlock& block, Difficulty currentDifficulty) const {
     if (BLOCK_MAJOR_VERSION_1 != block.getBlock().majorVersion) {

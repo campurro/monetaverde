@@ -522,13 +522,13 @@ Difficulty Core::getDifficultyForNextBlock() const {
 
   uint32_t topBlockIndex = mainChain->getTopBlockIndex();
 
-  uint8_t nextBlockMajorVersion = getBlockMajorVersionForHeight(topBlockIndex);
+  uint8_t nextBlockMajorVersion = getBlockMajorVersionForHeight(topBlockIndex+1);
 
   size_t blocksCount = std::min(static_cast<size_t>(topBlockIndex), currency.difficultyBlocksCountByBlockVersion(nextBlockMajorVersion));
 
   auto timestamps = mainChain->getLastTimestamps(blocksCount);
   auto difficulties = mainChain->getLastCumulativeDifficulties(blocksCount);
-
+  // logger(Logging::INFO, Logging::BRIGHT_GREEN) << "[Core] nexBlockMajorVersion: " << (int)nextBlockMajorVersion << ",blockIndex: " << topBlockIndex << ", blocksCount:" << (int)blocksCount;
   return currency.nextDifficulty(nextBlockMajorVersion, topBlockIndex, timestamps, difficulties);
 }
 
@@ -596,6 +596,7 @@ std::error_code Core::addBlock(const CachedBlock& cachedBlock, RawBlock&& rawBlo
   }
 
   auto currentDifficulty = cache->getDifficultyForNextBlock(previousBlockIndex);
+  // logger(Logging::INFO) << "[Core.cpp:599]Current difficulty: " << currentDifficulty << ", para el bloque: " << previousBlockIndex;
   if (currentDifficulty == 0) {
     logger(Logging::DEBUGGING) << "Block " << cachedBlock.getBlockHash() << " has difficulty overhead";
     return error::BlockValidationError::DIFFICULTY_OVERHEAD;
@@ -1043,6 +1044,7 @@ bool Core::getBlockTemplate(BlockTemplate& b, const AccountPublicAddress& adr, c
 
   height = getTopBlockIndex() + 1;
   difficulty = getDifficultyForNextBlock();
+  // logger(Logging::INFO, Logging::BRIGHT_RED) << "[getBlockTEmplate] height: " << height << ", diff: " << difficulty;
   if (difficulty == 0) {
     logger(Logging::ERROR, Logging::BRIGHT_RED) << "difficulty overhead.";
     return false;
@@ -1050,15 +1052,15 @@ bool Core::getBlockTemplate(BlockTemplate& b, const AccountPublicAddress& adr, c
 
   b = boost::value_initialized<BlockTemplate>();
   b.majorVersion = getBlockMajorVersionForHeight(height);
+  b.minorVersion = BLOCK_MINOR_VERSION_0; // cn original by default
 
-  if (b.majorVersion == BLOCK_MAJOR_VERSION_1) {
+ /* if (b.majorVersion == BLOCK_MAJOR_VERSION_1) {
     b.minorVersion = currency.upgradeHeight(BLOCK_MAJOR_VERSION_2) == IUpgradeDetector::UNDEF_HEIGHT ? BLOCK_MINOR_VERSION_1 : BLOCK_MINOR_VERSION_0;
-  } else if (b.majorVersion >= BLOCK_MAJOR_VERSION_2) {
-    if (currency.upgradeHeight(BLOCK_MAJOR_VERSION_3) == IUpgradeDetector::UNDEF_HEIGHT) {
-      b.minorVersion = b.majorVersion == BLOCK_MAJOR_VERSION_2 ? BLOCK_MINOR_VERSION_1 : BLOCK_MINOR_VERSION_0;
-    } else {
-      b.minorVersion = BLOCK_MINOR_VERSION_0;
-    }
+  } else */
+  if (b.majorVersion >= BLOCK_MAJOR_VERSION_2) {
+    /*if (currency.upgradeHeight(BLOCK_MAJOR_VERSION_3) == IUpgradeDetector::UNDEF_HEIGHT) {
+      b.majorVersion == BLOCK_MAJOR_VERSION_2 ? BLOCK_MINOR_VERSION_1 : BLOCK_MINOR_VERSION_0;
+    }*/
 
     b.parentBlock.majorVersion = BLOCK_MAJOR_VERSION_1;
     b.parentBlock.majorVersion = BLOCK_MINOR_VERSION_0;
@@ -1079,7 +1081,7 @@ bool Core::getBlockTemplate(BlockTemplate& b, const AccountPublicAddress& adr, c
   // Thanks Jagerman for this
   // adapted from monero code by stevebrush for bytecoin 2 code
 
-  if(b.majorVersion >= BLOCK_MAJOR_VERSION_3 && height >= currency.timestampCheckWindowV3()) {
+  if(b.majorVersion > BLOCK_MAJOR_VERSION_3 && height >= currency.timestampCheckWindowV3()) {
       std::vector<uint64_t> timestamps;
       for(size_t offset = height - currency.timestampCheckWindowV3(); offset < height; ++offset){
           timestamps.push_back(getBlockTimestampByIndex(offset));
