@@ -130,7 +130,10 @@ public:
   Difficulty nextDifficulty(uint8_t version, uint32_t blockIndex, std::vector<uint64_t> timestamps, std::vector<Difficulty> cumulativeDifficulties) const;
   Difficulty nextDifficultyOriginal(std::vector<uint64_t> timestamps, std::vector<Difficulty> cumulativeDifficulties) const;
   //Difficulty nextDifficultyLWMA(uint8_t &version, std::vector<uint64_t> &timestamps, std::vector<Difficulty> &cumulativeDifficulties) const;
-
+Difficulty nextDifficultyV3(uint8_t &version,
+        std::vector<uint64_t> &timestamps,
+        std::vector<Difficulty> &cumulativeDifficulties
+        ) const;
   Difficulty nextDifficultyLWMA(std::vector<uint64_t> &timestamps,
                            std::vector<uint64_t> &cumulative_difficulties,
                            const uint64_t &T, const uint64_t &N,

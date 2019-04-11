@@ -537,6 +537,47 @@ bool Currency::parseAmount(const std::string& str, uint64_t& amount) const {
     return Common::fromString(strAmount, amount);
 }
 
+Difficulty Currency::nextDifficultyV3(uint8_t &version,
+        std::vector<uint64_t> &timestamps,
+        std::vector<Difficulty> &cumulativeDifficulties
+        ) const  {
+    const size_t c_difficultyWindow = difficultyWindowByBlockVersion(version); // 61
+    const int64_t c_difficultyTarget = static_cast<int64_t>(m_difficultyTarget);
+    if (timestamps.size() > c_difficultyWindow) {
+        timestamps.resize(c_difficultyWindow);
+        cumulativeDifficulties.resize(c_difficultyWindow);
+    }
+    size_t length = timestamps.size();
+    assert(length == cumulativeDifficulties.size());
+    assert(length <= c_difficultyWindow);
+    if (length <= 1) {
+        return 1;
+    }
+    int64_t solveTime(0),LWMA(0),minWST(0);
+    uint64_t aimedTarget(0),low,high;
+    Difficulty totalWork(0),nextDiff(0);
+    const double_t adjust = 0.9909;
+    for (int64_t i = 1; i < length; i++) { // lenght = 61
+        solveTime = static_cast<int64_t>(timestamps[i]) - static_cast<int64_t>(timestamps[i-1]);
+        solveTime = std::max<int64_t>(- blockFutureTimeLimit(), solveTime);
+        LWMA += solveTime * i;
+    }
+    // Keep LWMA sane in case something unforeseen occurs.if ( LWMA < T*N*(N+1)/8 ) { LWMA = T*N*(N+1)/8; N=lenght-1}
+    minWST = c_difficultyTarget * length*(length-1)/8;
+    if(LWMA < minWST){
+        LWMA = minWST;
+    }
+    totalWork = cumulativeDifficulties.back() - cumulativeDifficulties.front();
+    aimedTarget = adjust * (length / 2.0) * c_difficultyTarget ;
+    assert(totalWork > 0);
+    low = mul128(totalWork, aimedTarget, &high);
+    if (high != 0) {
+        return 0;
+    }
+    nextDiff = low/LWMA;
+    return nextDiff;
+}
+
 Difficulty Currency::nextDifficulty(
         uint8_t version,
         uint32_t blockIndex,
@@ -545,9 +586,10 @@ Difficulty Currency::nextDifficulty(
         ) const {
     Difficulty nextDiff;
     if (version >= BLOCK_MAJOR_VERSION_3) {
-        nextDiff =  nextDifficultyLWMA(timestamps, cumulativeDifficulties, m_difficultyTarget,
+        nextDiff = nextDifficultyV3(version, timestamps, cumulativeDifficulties);
+        /*nextDiff =  nextDifficultyLWMA(timestamps, cumulativeDifficulties, m_difficultyTarget,
                          difficultyWindowByBlockVersion(version), blockIndex,
-                         m_upgradeHeightV3, m_difficultyGuess);
+                         m_upgradeHeightV3, m_difficultyGuess);*/
         // nextDiff = nextDifficultyLWMA(version, timestamps,cumulativeDifficulties);
     } else {
         nextDiff = nextDifficultyOriginal(timestamps,cumulativeDifficulties);
@@ -557,6 +599,8 @@ Difficulty Currency::nextDifficulty(
     }
     return nextDiff;
 }
+
+
 
 /**
  * Original cryptonote difficulty algo

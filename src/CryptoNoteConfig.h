@@ -32,7 +32,7 @@ const uint32_t CRYPTONOTE_MINED_MONEY_UNLOCK_WINDOW          = 60;
 const uint64_t CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT            = 60 * 60 * 2; // 525; // T*N/20
 
 const size_t   BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW             = 60;
-const size_t   BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW_V3          = 60;
+const size_t   BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW_V3          = 11;
 
 // MONEY_SUPPLY - total number coins to be generated
 const uint64_t MONEY_SUPPLY                                  = static_cast<uint64_t>(-1);
@@ -65,7 +65,7 @@ const size_t   DIFFICULTY_WINDOW                             = 720; //EXPECTED_N
 const size_t   DIFFICULTY_WINDOW_V3                          = 61;
 const size_t   DIFFICULTY_CUT                                = 60;
 const size_t   DIFFICULTY_LAG                                = 15;
-const size_t   DIFFICULTY_LAG_V2                             = 0;
+const size_t   DIFFICULTY_LAG_V2                             = 15;
 #define DIFFICULTY_BLOCKS_COUNT                         parameters::DIFFICULTY_WINDOW + parameters::DIFFICULTY_LAG
 static_assert(2 * DIFFICULTY_CUT <= DIFFICULTY_WINDOW - 2, "Bad DIFFICULTY_WINDOW or DIFFICULTY_CUT");
 
