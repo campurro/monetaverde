@@ -129,16 +129,10 @@ public:
 
   Difficulty nextDifficulty(uint8_t version, uint32_t blockIndex, std::vector<uint64_t> timestamps, std::vector<Difficulty> cumulativeDifficulties) const;
   Difficulty nextDifficultyOriginal(std::vector<uint64_t> timestamps, std::vector<Difficulty> cumulativeDifficulties) const;
-  //Difficulty nextDifficultyLWMA(uint8_t &version, std::vector<uint64_t> &timestamps, std::vector<Difficulty> &cumulativeDifficulties) const;
-Difficulty nextDifficultyV3(uint8_t &version,
+  Difficulty nextDifficultyLWMA4(uint8_t &version,
         std::vector<uint64_t> &timestamps,
         std::vector<Difficulty> &cumulativeDifficulties
         ) const;
-  Difficulty nextDifficultyLWMA(std::vector<uint64_t> &timestamps,
-                           std::vector<uint64_t> &cumulative_difficulties,
-                           const uint64_t &T, const uint64_t &N,
-                           const uint64_t &height, const uint64_t &FORK_HEIGHT,
-                           const uint64_t &difficulty_guess) const;
 
   bool checkProofOfWorkV1(Crypto::cn_context& context, const CachedBlock& block, Difficulty currentDifficulty) const;
   bool checkProofOfWorkV2(Crypto::cn_context& context, const CachedBlock& block, Difficulty currentDifficulty) const;
@@ -185,9 +179,7 @@ private:
   uint64_t m_defaultDustThreshold;
 
   uint64_t m_difficultyTarget;
-  uint64_t m_difficultyGuess;
   uint64_t m_testnet_DifficultyTarget;
-  uint64_t m_testnetDifficultyGuess;
 
   size_t m_difficultyWindow;
   size_t m_difficultyLag;
@@ -278,8 +270,6 @@ public:
 
   CurrencyBuilder& difficultyTarget(uint64_t val) { m_currency.m_difficultyTarget = val; return *this; }
   CurrencyBuilder& testnetDifficultyTarget(uint64_t val) { m_currency.m_testnet_DifficultyTarget = val; return *this; }
-  CurrencyBuilder& difficultyGuess(uint64_t val) { m_currency.m_difficultyGuess = val; return *this; }
-  CurrencyBuilder& testnetDifficultyGuess(uint64_t val) { m_currency.m_testnetDifficultyGuess = val; return *this; }
 
   CurrencyBuilder& difficultyWindow(size_t val);
   CurrencyBuilder& difficultyLag(size_t val) { m_currency.m_difficultyLag = val; return *this; }

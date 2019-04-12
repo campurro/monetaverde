@@ -59,7 +59,6 @@ const uint64_t MINIMUM_FEE                                   = UINT64_C(1000000)
 const uint64_t DEFAULT_DUST_THRESHOLD                        = UINT64_C(1000000);    // pow(10, 6)
 
 const uint64_t DIFFICULTY_TARGET                             = 60;
-const uint64_t DIFFICULTY_GUESS                           = 5000000;
 const uint64_t EXPECTED_NUMBER_OF_BLOCKS_PER_DAY             = 24 * 60 * 60 / DIFFICULTY_TARGET;
 const size_t   DIFFICULTY_WINDOW                             = 720; //EXPECTED_NUMBER_OF_BLOCKS_PER_DAY;
 const size_t   DIFFICULTY_WINDOW_V3                          = 61;
@@ -104,7 +103,6 @@ const uint32_t TESTNET_UPGRADE_HEIGHT_V2                             = 0;
 const uint32_t TESTNET_UPGRADE_HEIGHT_V3                             = 5;
 const uint32_t TESTNET_UPGRADE_HEIGHT_V4                             = 999999999;
 const uint64_t TESTNET_DIFFICULTY_TARGET                             = 15; // target in testnet mode
-const uint64_t TESTNET_DIFFICULTY_GUESS                              = 200;
 
 } // parameters
 
