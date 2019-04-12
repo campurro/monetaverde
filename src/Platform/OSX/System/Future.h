@@ -162,7 +162,7 @@ private:
 };
 
 template<class T> std::function<T()> async(std::function<T()>&& operation) {
-  return operation;
+  return std::move(operation);
 }
 
 }
