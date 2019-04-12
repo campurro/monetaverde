@@ -28,6 +28,7 @@
 #include <windows.h>
 #include <ntsecapi.h>
 #include <tchar.h>
+#include <atlbase.h>
 
 
 #include "common/log/Log.h"
@@ -84,8 +85,10 @@ static BOOL SetLockPagesPrivilege() {
 
 static LSA_UNICODE_STRING StringToLsaUnicodeString(LPCTSTR string) {
     LSA_UNICODE_STRING lsaString;
+    USES_CONVERSION;
 
-    DWORD dwLen = (DWORD) wcslen(string);
+	const WCHAR * to = T2CW(string);
+    DWORD dwLen = (DWORD) wcslen(to);
     lsaString.Buffer = (LPWSTR) string;
     lsaString.Length = (USHORT)((dwLen) * sizeof(WCHAR));
     lsaString.MaximumLength = (USHORT)((dwLen + 1) * sizeof(WCHAR));

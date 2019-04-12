@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdint.h>
+#ifndef _MSC_VER
 #include <sys/mman.h>
+#endif
 
 //#if (defined(__AES__) && (__AES__ == 1)) || defined(__APPLE__) || defined(__ARM_ARCH)
 //#else
