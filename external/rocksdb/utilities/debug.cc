@@ -12,6 +12,7 @@
 namespace rocksdb {
 
 Status GetAllKeyVersions(DB* db, Slice begin_key, Slice end_key,
+                         size_t max_num_ikeys,
                          std::vector<KeyVersion>* key_versions) {
   assert(key_versions != nullptr);
   key_versions->clear();
@@ -24,12 +25,13 @@ Status GetAllKeyVersions(DB* db, Slice begin_key, Slice end_key,
 
   if (!begin_key.empty()) {
     InternalKey ikey;
-    ikey.SetMaxPossibleForUserKey(begin_key);
+    ikey.SetMinPossibleForUserKey(begin_key);
     iter->Seek(ikey.Encode());
   } else {
     iter->SeekToFirst();
   }
 
+  size_t num_keys = 0;
   for (; iter->Valid(); iter->Next()) {
     ParsedInternalKey ikey;
     if (!ParseInternalKey(iter->key(), &ikey)) {
@@ -46,6 +48,9 @@ Status GetAllKeyVersions(DB* db, Slice begin_key, Slice end_key,
                                iter->value().ToString() /* _value */,
                                ikey.sequence /* _sequence */,
                                static_cast<int>(ikey.type) /* _type */);
+    if (++num_keys >= max_num_ikeys) {
+      break;
+    }
   }
   return Status::OK();
 }

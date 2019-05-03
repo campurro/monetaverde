@@ -136,7 +136,7 @@ Status BlockCacheTier::Close() {
 template<class T>
 void Add(std::map<std::string, double>* stats, const std::string& key,
          const T& t) {
-  stats->insert({key, static_cast<const double>(t)});
+  stats->insert({key, static_cast<double>(t)});
 }
 
 PersistentCache::StatsType BlockCacheTier::Stats() {
@@ -163,7 +163,7 @@ PersistentCache::StatsType BlockCacheTier::Stats() {
       stats_.read_hit_latency_.Average());
   Add(&stats, "persistentcache.blockcachetier.read_miss_latency",
       stats_.read_miss_latency_.Average());
-  Add(&stats, "persistenetcache.blockcachetier.write_latency",
+  Add(&stats, "persistentcache.blockcachetier.write_latency",
       stats_.write_latency_.Average());
 
   auto out = PersistentCacheTier::Stats();

@@ -16,8 +16,7 @@
 // non-const method, all threads accessing the same Iterator must use
 // external synchronization.
 
-#ifndef INCLUDE_ROCKSDB_CLEANABLE_H_
-#define INCLUDE_ROCKSDB_CLEANABLE_H_
+#pragma once
 
 namespace rocksdb {
 
@@ -25,6 +24,15 @@ class Cleanable {
  public:
   Cleanable();
   ~Cleanable();
+
+  // No copy constructor and copy assignment allowed.
+  Cleanable(Cleanable&) = delete;
+  Cleanable& operator=(Cleanable&) = delete;
+
+  // Move constructor and move assignment is allowed.
+  Cleanable(Cleanable&&);
+  Cleanable& operator=(Cleanable&&);
+
   // Clients are allowed to register function/arg1/arg2 triples that
   // will be invoked when this iterator is destroyed.
   //
@@ -33,7 +41,7 @@ class Cleanable {
   typedef void (*CleanupFunction)(void* arg1, void* arg2);
   void RegisterCleanup(CleanupFunction function, void* arg1, void* arg2);
   void DelegateCleanupsTo(Cleanable* other);
-  // DoCkeanup and also resets the pointers for reuse
+  // DoCleanup and also resets the pointers for reuse
   inline void Reset() {
     DoCleanup();
     cleanup_.function = nullptr;
@@ -69,5 +77,3 @@ class Cleanable {
 };
 
 }  // namespace rocksdb
-
-#endif  // INCLUDE_ROCKSDB_CLEANABLE_H_

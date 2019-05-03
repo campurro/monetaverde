@@ -25,12 +25,18 @@
  * @author Tian Xia <tianx@fb.com>
  */
 
-#ifndef FBSON_FBSONWRITER_H
-#define FBSON_FBSONWRITER_H
+#pragma once
 
 #include <stack>
 #include "FbsonDocument.h"
 #include "FbsonStream.h"
+
+// conversion' conversion from 'type1' to 'type2', possible loss of data
+// Can not restore at the header end as the warnings are emitted at the point of
+// template instantiation
+#if defined(_MSC_VER)
+#pragma warning(disable : 4244)
+#endif
 
 namespace fbson {
 
@@ -426,5 +432,3 @@ class FbsonWriterT {
 typedef FbsonWriterT<FbsonOutStream> FbsonWriter;
 
 } // namespace fbson
-
-#endif // FBSON_FBSONWRITER_H
