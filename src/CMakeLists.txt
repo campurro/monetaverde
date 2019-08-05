@@ -7,7 +7,7 @@ option(WITH_AEON            "CryptoNight-Lite support" ON)
 option(WITH_SUMO            "CryptoNight-Heavy support" ON)
 option(WITH_CN_PICO         "CryptoNight-Pico support" ON)
 option(WITH_CN_GPU          "CryptoNight-GPU support" ON)
-option(WITH_HW_AES          "CPU supports AES instructions set" OFF)
+option(WITH_HW_AES          "CPU supports AES instructions set" ON)
 
 include_directories(${CMAKE_SOURCE_DIR}/src/MultiHashing/xmrig)
 include_directories(${CMAKE_SOURCE_DIR}/src/MultiHashing/xmrig/3rdparty)
