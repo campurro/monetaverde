@@ -64,13 +64,12 @@ std::error_code interpretResponseStatus(const std::string& status) {
 
 NodeRpcProxy::NodeRpcProxy(const std::string& nodeHost, unsigned short nodePort, Logging::ILogger& logger) :
     m_logger(logger, "NodeRpcProxy"),
-    
     m_nodeHost(nodeHost),
-    
-    
     m_nodePort(nodePort),
     m_rpcTimeout(10000),
     m_pullInterval(5000),
+    m_peerCount(0),
+    m_networkHeight(0),
     m_connected(true) {
   resetInternalState();
 }

@@ -18,6 +18,7 @@
 #include "PaymentServiceConfiguration.h"
 
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 #include <boost/program_options.hpp>
 
@@ -106,6 +107,14 @@ void Configuration::init(const boost::program_options::variables_map& options) {
 
   if (options.count("container-file") != 0) {
     containerFile = options["container-file"].as<std::string>();
+  }
+
+  if (! std::ifstream(containerFile) && options.count("generate-container") == 0) {
+    if (std::ifstream(containerFile + ".wallet")) {
+      throw ConfigurationError(("Wallet container file not found, do you mean: " + containerFile + ".wallet?").c_str());
+    } else {
+      throw ConfigurationError("Wallet container file not found !, check your name and path.");
+    }
   }
 
   if (options.count("container-password") != 0) {

@@ -251,7 +251,8 @@ void PaymentGateService::runInProcess(Logging::LoggerRef& log) {
   p2pNode.sendStopSignal();
   context.get();
   node->shutdown();
-  p2pNode.deinit(); 
+  p2pNode.deinit();
+  core.save();
 }
 
 void PaymentGateService::runRpcProxy(Logging::LoggerRef& log) {
