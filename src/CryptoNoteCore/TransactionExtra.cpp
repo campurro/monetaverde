@@ -32,8 +32,7 @@ namespace CryptoNote {
 bool parseTransactionExtra(const std::vector<uint8_t> &transactionExtra, std::vector<TransactionExtraField> &transactionExtraFields) {
   transactionExtraFields.clear();
 
-  if (transactionExtra.empty())
-    return true;
+  if (transactionExtra.empty()) return true;
 
   try {
     MemoryInputStream iss(transactionExtra.data(), transactionExtra.size());
