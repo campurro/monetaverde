@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.6)
 
 #Set build version
 set(VERSION_MAJOR "1")
-set(VERSION_MINOR "0.0 ${CMAKE_BUILD_TYPE}")
+set(VERSION_MINOR "0.1 ${CMAKE_BUILD_TYPE}")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_CONFIGURATION_TYPES Debug Release CACHE TYPE INTERNAL)
