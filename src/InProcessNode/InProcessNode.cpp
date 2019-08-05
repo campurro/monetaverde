@@ -725,6 +725,10 @@ void InProcessNode::getPoolSymmetricDifference(std::vector<Crypto::Hash>&& known
     return;
   }
 
+  if(knownBlockId != core.getTopBlockHash()) {
+        knownBlockId = core.getTopBlockHash();
+  }
+
   executeInDispatcherThread([=, &isBcActual, &newTxs, &deletedTxIds] () mutable {
     auto ec = doGetPoolSymmetricDifference(std::move(knownPoolTxIds), knownBlockId, isBcActual, newTxs, deletedTxIds);
     executeInRemoteThread([callback, ec] () { callback(ec); });

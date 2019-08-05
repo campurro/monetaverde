@@ -85,7 +85,7 @@ namespace CryptoNote {
 class SyncStarter : public CryptoNote::IWalletLegacyObserver {
 public:
   SyncStarter(BlockchainSynchronizer& sync) : m_sync(sync) {}
-  virtual ~SyncStarter() {}
+  virtual ~SyncStarter() override {}
 
   virtual void initCompleted(std::error_code result) override {
     if (!result) {

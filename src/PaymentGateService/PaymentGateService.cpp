@@ -232,7 +232,7 @@ void PaymentGateService::runInProcess(Logging::LoggerRef& log) {
     log(Logging::WARNING, Logging::YELLOW) << "Failed to init node: " << nodeInitStatus.message();
     throw std::system_error(nodeInitStatus);
   } else {
-    log(Logging::INFO) << "node is inited successfully";
+    log(Logging::INFO) << "node initialization successfull";
   }
 
   log(Logging::INFO) << "Spawning p2p server";

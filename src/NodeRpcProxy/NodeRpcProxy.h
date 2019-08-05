@@ -47,7 +47,7 @@ public:
 class NodeRpcProxy : public CryptoNote::INode {
 public:
   NodeRpcProxy(const std::string& nodeHost, unsigned short nodePort, Logging::ILogger& logger);
-  virtual ~NodeRpcProxy();
+  virtual ~NodeRpcProxy() override;
 
   virtual bool addObserver(CryptoNote::INodeObserver* observer) override;
   virtual bool removeObserver(CryptoNote::INodeObserver* observer) override;
@@ -155,6 +155,8 @@ private:
   BlockHeaderInfo lastLocalBlockHeaderInfo;
   //protect it with mutex if decided to add worker threads
   std::unordered_set<Crypto::Hash> m_knownTxs;
+  Crypto::Hash m_lastHash = {0};
+  Crypto::Hash nullHash = {0};
 
   bool m_connected;
 };
