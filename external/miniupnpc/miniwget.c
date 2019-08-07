@@ -54,6 +54,10 @@
 #include "connecthostport.h"
 #include "receivedata.h"
 
+#ifndef UPNP_VERSION_STRING
+#define UPNP_VERSION_STRING "UPnP/1.1"
+#endif
+
 #ifndef MAXHOSTNAMELEN
 #define MAXHOSTNAMELEN 64
 #endif
@@ -441,7 +445,7 @@ miniwget3(const char * host,
                  "GET %s HTTP/%s\r\n"
 			     "Host: %s:%d\r\n"
 				 "Connection: Close\r\n"
-				 "User-Agent: " OS_STRING ", " UPNP_VERSION_STRING ", MiniUPnPc/" MINIUPNPC_VERSION_STRING "\r\n"
+                 "User-Agent: " OS_STRING ", " UPNP_VERSION_STRING ", MiniUPnPc/" MINIUPNPC_VERSION_STRING "\r\n"
 
 				 "\r\n",
 			   path, httpversion, host, port);

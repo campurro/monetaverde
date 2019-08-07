@@ -22,6 +22,10 @@
 #include "minisoap.h"
 #include "miniupnpcstrings.h"
 
+#ifndef UPNP_VERSION_STRING
+#define UPNP_VERSION_STRING "UPnP/1.1"
+#endif
+
 /* only for malloc */
 #include <stdlib.h>
 
@@ -97,7 +101,7 @@ int soapPostSubmit(SOCKET fd,
 	headerssize = snprintf(headerbuf, sizeof(headerbuf),
                        "POST %s HTTP/%s\r\n"
 	                   "Host: %s%s\r\n"
-					   "User-Agent: " OS_STRING ", " UPNP_VERSION_STRING ", MiniUPnPc/" MINIUPNPC_VERSION_STRING "\r\n"
+                       "User-Agent: " OS_STRING ", " UPNP_VERSION_STRING ", MiniUPnPc/" MINIUPNPC_VERSION_STRING "\r\n"
 	                   "Content-Length: %d\r\n"
 					   "Content-Type: text/xml\r\n"
 					   "SOAPAction: \"%s\"\r\n"
