@@ -145,8 +145,6 @@ const char     P2P_STAT_TRUSTED_PUB_KEY[]                    = "db9eabe971890012
 const char* const SEED_NODES[] = {
   "51.75.145.218:26080", // germany
   "145.239.5.182:26080", // london
-  "144.217.242.127:26080", // canada
-  "144.217.84.27:26080", // canada2
   "173.212.213.63:26080" // oieieio's
 };
 
@@ -169,7 +167,10 @@ const std::initializer_list<CheckpointData> CHECKPOINTS = {
     {2400000, "1db3c24ea800eda2abb590974b2463a7c0ffc08bfdb688879b8a01f6208f5701"},
     {2480000, "3fafc3463a222cd5f9ef421b1e46e36743164ded0225e6ea4afef61287814612"},
     {2550000, "603bac810d9c514f8afa3f43b97d3b28c7c1c8261cd98504bebdcd7a4eb93271"},
-    {2640000, "ff799db753fc56ac268ec2c540f503d641e10ed52cba3a371e0c7500057b5abf"}
+    {2640000, "ff799db753fc56ac268ec2c540f503d641e10ed52cba3a371e0c7500057b5abf"},
+    {2700000, "66f0d220515c4b48d4ba4e9cd4937b2c5f29fe7e96003c9354da7201258214b8"},
+    {2800000, "9900bed43f7195192c62c1d89448b88e5f428024b003b3796418fe61729241b2"},
+    {2900000, "09a49c65cd2693ca63324c6683181edd2e30c615eb1339dbb6abec777e9ae850"}
 };
 
 } // CryptoNote
